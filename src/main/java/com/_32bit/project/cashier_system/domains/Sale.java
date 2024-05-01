@@ -33,6 +33,10 @@ public class Sale {
     @JoinColumn(name = "soldBy")
     private TeamMember soldBy;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "offer")
+    private Offer offer;
+
     @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<SaleItem> saleItems = new ArrayList<>();
 
@@ -53,6 +57,14 @@ public class Sale {
             this.salesValue = +saleItem.getValue();
         }
         this.change = this.receivedMoney - this.salesValue;
+    }
+
+    public Offer getOffer() {
+        return offer;
+    }
+
+    public void setOffer(Offer offer) {
+        this.offer = offer;
     }
 
     public Boolean getDeleted() {

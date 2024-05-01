@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 
 @Entity
@@ -35,6 +36,12 @@ public class Product {
     private TeamMember insertedBy;
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<SaleItem> saleItems = new ArrayList<>();
+
+    @ManyToOne
+    @JoinTable(name = "product__product_group",
+        joinColumns = @JoinColumn(name = "Product_id"),
+        inverseJoinColumns = @JoinColumn(name = "product_group_id"))
+    private Set<String> productGroup;
 
     public Product() {
         this.deleted = false;

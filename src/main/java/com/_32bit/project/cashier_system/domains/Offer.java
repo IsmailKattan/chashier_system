@@ -19,45 +19,37 @@ public class Offer {
     @NotBlank
     @Size(max = 150)
     private String description;
-    @Temporal(TemporalType.DATE)
-    @Column(name = "start_date")
-    private Date startDate;
-    @Temporal(TemporalType.DATE)
-    @Column(name = "end_date")
-    private Date EndDate;
 
-    private Boolean deleted;
+    @Temporal(TemporalType.DATE)
+    @Column(name = "start_date",nullable = false)
+    private Date starDate;
+    @Temporal(TemporalType.DATE)
+    @Column(name = "end_date",nullable = false)
+    private Date endDate;
+    @Column(nullable = false)
+    private Double limit;
+
+    private boolean deleted;
+
+    @OneToMany(mappedBy = "offer",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<Sale> sales = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reward")
-    private Reward reward;
+    @JoinColumn(name = "coupon_type")
+    private CouponType couponType;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "condition")
-    private Condition condition;
-
-    @OneToMany(mappedBy = "offer",cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SaleItem> saleItems = new ArrayList<>();
 
     public Offer() {
         this.deleted = false;
     }
 
-    public Offer(String description, Date startDate, Date endDate, Reward reward, Condition condition) {
+    public Offer(String description, Date starDate, Date endDate, Double limit, CouponType couponType) {
         this.description = description;
-        this.startDate = startDate;
-        EndDate = endDate;
-        this.reward = reward;
-        this.condition = condition;
+        this.starDate = starDate;
+        this.endDate = endDate;
+        this.limit = limit;
+        this.couponType = couponType;
         this.deleted = false;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public List<SaleItem> getSaleItems() {
-        return saleItems;
     }
 
     public String getDescription() {
@@ -68,44 +60,52 @@ public class Offer {
         this.description = description;
     }
 
-    public Date getStartDate() {
-        return startDate;
+    public Date getStarDate() {
+        return starDate;
     }
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
+    public void setStarDate(Date starDate) {
+        this.starDate = starDate;
     }
 
     public Date getEndDate() {
-        return EndDate;
+        return endDate;
     }
 
     public void setEndDate(Date endDate) {
-        EndDate = endDate;
+        this.endDate = endDate;
     }
 
-    public Boolean getDeleted() {
+    public Double getLimit() {
+        return limit;
+    }
+
+    public void setLimit(Double limit) {
+        this.limit = limit;
+    }
+
+    public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(Boolean deleted) {
+    public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
 
-    public Reward getReward() {
-        return reward;
+    public CouponType getCouponType() {
+        return couponType;
     }
 
-    public void setReward(Reward reward) {
-        this.reward = reward;
+    public void setCouponType(CouponType couponType) {
+        this.couponType = couponType;
     }
 
-    public Condition getCondition() {
-        return condition;
+    public Long getId() {
+        return id;
     }
 
-    public void setCondition(Condition condition) {
-        this.condition = condition;
+    public List<Sale> getSales() {
+        return sales;
     }
 
     @Override
@@ -113,11 +113,11 @@ public class Offer {
         return "Offer{" +
                 "id=" + id +
                 ", description='" + description + '\'' +
-                ", startDate=" + startDate +
-                ", EndDate=" + EndDate +
+                ", starDate=" + starDate +
+                ", endDate=" + endDate +
+                ", limit=" + limit +
                 ", deleted=" + deleted +
-                ", reward=" + reward +
-                ", condition=" + condition +
+                ", couponType=" + couponType +
                 '}';
     }
 }
