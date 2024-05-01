@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -37,11 +38,11 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<SaleItem> saleItems = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToMany
     @JoinTable(name = "product__product_group",
         joinColumns = @JoinColumn(name = "Product_id"),
         inverseJoinColumns = @JoinColumn(name = "product_group_id"))
-    private Set<String> productGroup;
+    private Set<ProductGroup> productGroup = new HashSet<>();
 
     public Product() {
         this.deleted = false;

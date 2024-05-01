@@ -29,10 +29,10 @@ public class CouponType {
 
     private Boolean deleted;
 
-    @OneToMany(mappedBy = "coupon_type",fetch = FetchType.LAZY,cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "couponType",fetch = FetchType.LAZY,cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Offer> offers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "coupon_type" ,fetch =  FetchType.LAZY,cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "couponType" ,fetch =  FetchType.LAZY,cascade = CascadeType.ALL)
     private List<Coupon> coupons = new ArrayList<>();
 
     public CouponType() {
