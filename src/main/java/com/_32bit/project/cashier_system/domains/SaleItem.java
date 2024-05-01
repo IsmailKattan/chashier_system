@@ -25,20 +25,16 @@ public class SaleItem {
     @JoinColumn(name = "product")
     private Product product;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "offer")
-    private Offer offer;
 
     public SaleItem() {
         this.deleted = false;
     }
 
-    public SaleItem(Double quantity, Sale sale, Product product, Offer offer) {
+    public SaleItem(Double quantity, Sale sale, Product product) {
         this.quantity = quantity;
         this.deleted = false;
         this.sale = sale;
         this.product = product;
-        this.offer = offer;
         this.value = this.quantity * this.product.getPrice();
     }
 
@@ -86,13 +82,6 @@ public class SaleItem {
         this.product = product;
     }
 
-    public Offer getOffer() {
-        return offer;
-    }
-
-    public void setOffer(Offer offer) {
-        this.offer = offer;
-    }
 
     @Override
     public String toString() {
@@ -103,7 +92,6 @@ public class SaleItem {
                 ", deleted=" + deleted +
                 ", sale=" + sale +
                 ", product=" + product +
-                ", offer=" + offer +
                 '}';
     }
 }
