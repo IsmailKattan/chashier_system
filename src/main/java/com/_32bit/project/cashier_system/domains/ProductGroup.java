@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -18,8 +19,8 @@ public class ProductGroup {
     private String name;
     private Boolean deleted;
 
-    @ManyToMany(mappedBy = "productGroup")
-    private Set<Product> products;
+    @ManyToMany(mappedBy = "productGroup",fetch = FetchType.LAZY)
+    private Set<Product> products = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "discount")

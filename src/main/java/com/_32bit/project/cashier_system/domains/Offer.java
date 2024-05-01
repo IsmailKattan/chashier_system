@@ -35,7 +35,7 @@ public class Offer {
     private List<Sale> sales = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "coupon_type")
+    @JoinColumn(name = "couponType")
     private CouponType couponType;
 
 
