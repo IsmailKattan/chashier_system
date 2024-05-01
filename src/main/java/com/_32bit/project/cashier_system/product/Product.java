@@ -1,5 +1,9 @@
-package com._32bit.project.cashier_system.domains;
+package com._32bit.project.cashier_system.product;
 
+import com._32bit.project.cashier_system.productGroup.ProductGroup;
+import com._32bit.project.cashier_system.saleItem.SaleItem;
+import com._32bit.project.cashier_system.enums.Unit;
+import com._32bit.project.cashier_system.teamMember.TeamMember;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

@@ -1,5 +1,7 @@
-package com._32bit.project.cashier_system.domains;
+package com._32bit.project.cashier_system.offer;
 
+import com._32bit.project.cashier_system.couponType.CouponType;
+import com._32bit.project.cashier_system.sale.Sale;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -22,12 +24,12 @@ public class Offer {
 
     @Temporal(TemporalType.DATE)
     @Column(name = "start_date",nullable = false)
-    private Date starDate;
+    private Date startDate;
     @Temporal(TemporalType.DATE)
     @Column(name = "end_date",nullable = false)
     private Date endDate;
     @Column(nullable = false)
-    private Double limit;
+    private Double offerLimit;
 
     private boolean deleted;
 
@@ -43,11 +45,11 @@ public class Offer {
         this.deleted = false;
     }
 
-    public Offer(String description, Date starDate, Date endDate, Double limit, CouponType couponType) {
+    public Offer(String description, Date startDate, Date endDate, Double offerLimit, CouponType couponType) {
         this.description = description;
-        this.starDate = starDate;
+        this.startDate = startDate;
         this.endDate = endDate;
-        this.limit = limit;
+        this.offerLimit = offerLimit;
         this.couponType = couponType;
         this.deleted = false;
     }
@@ -60,12 +62,12 @@ public class Offer {
         this.description = description;
     }
 
-    public Date getStarDate() {
-        return starDate;
+    public Date getStartDate() {
+        return startDate;
     }
 
-    public void setStarDate(Date starDate) {
-        this.starDate = starDate;
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
 
     public Date getEndDate() {
@@ -76,12 +78,12 @@ public class Offer {
         this.endDate = endDate;
     }
 
-    public Double getLimit() {
-        return limit;
+    public Double getOfferLimit() {
+        return offerLimit;
     }
 
-    public void setLimit(Double limit) {
-        this.limit = limit;
+    public void setOfferLimit(Double offerLimit) {
+        this.offerLimit = offerLimit;
     }
 
     public boolean isDeleted() {
@@ -113,9 +115,9 @@ public class Offer {
         return "Offer{" +
                 "id=" + id +
                 ", description='" + description + '\'' +
-                ", starDate=" + starDate +
+                ", startDate=" + startDate +
                 ", endDate=" + endDate +
-                ", limit=" + limit +
+                ", offerLimit=" + offerLimit +
                 ", deleted=" + deleted +
                 ", couponType=" + couponType +
                 '}';

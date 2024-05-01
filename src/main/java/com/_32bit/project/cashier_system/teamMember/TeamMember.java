@@ -1,5 +1,8 @@
-package com._32bit.project.cashier_system.domains;
+package com._32bit.project.cashier_system.teamMember;
 
+import com._32bit.project.cashier_system.product.Product;
+import com._32bit.project.cashier_system.role.Role;
+import com._32bit.project.cashier_system.sale.Sale;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

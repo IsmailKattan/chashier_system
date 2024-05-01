@@ -1,4 +1,4 @@
-package com._32bit.project.cashier_system.domains;
+package com._32bit.project.cashier_system.enums;
 
 public enum PaymentType {
     kredi_karti,

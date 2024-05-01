@@ -1,5 +1,7 @@
-package com._32bit.project.cashier_system.domains;
+package com._32bit.project.cashier_system.productGroup;
 
+import com._32bit.project.cashier_system.discount.Discount;
+import com._32bit.project.cashier_system.product.Product;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

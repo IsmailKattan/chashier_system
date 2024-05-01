@@ -1,5 +1,8 @@
-package com._32bit.project.cashier_system.domains;
+package com._32bit.project.cashier_system.couponType;
 
+import com._32bit.project.cashier_system.coupon.Coupon;
+import com._32bit.project.cashier_system.offer.Offer;
+import com._32bit.project.cashier_system.enums.DiscountType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
