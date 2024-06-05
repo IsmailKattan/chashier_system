@@ -1,9 +1,6 @@
-package com._32bit.project.cashier_system.sale;
+package com._32bit.project.cashier_system.domains;
 
-import com._32bit.project.cashier_system.offer.Offer;
-import com._32bit.project.cashier_system.saleItem.SaleItem;
 import com._32bit.project.cashier_system.enums.PaymentType;
-import com._32bit.project.cashier_system.teamMember.TeamMember;
 import jakarta.persistence.*;
 
 import java.sql.Time;

@@ -1,6 +1,6 @@
-package com._32bit.project.cashier_system.teamMember;
+package com._32bit.project.cashier_system.repository;
 
-import com._32bit.project.cashier_system.teamMember.TeamMember;
+import com._32bit.project.cashier_system.domains.TeamMember;
 import org.hibernate.type.descriptor.converter.spi.JpaAttributeConverter;
 import org.springframework.stereotype.Repository;
 

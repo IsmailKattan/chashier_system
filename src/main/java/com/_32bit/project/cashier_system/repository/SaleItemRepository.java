@@ -1,5 +1,6 @@
-package com._32bit.project.cashier_system.saleItem;
+package com._32bit.project.cashier_system.repository;
 
+import com._32bit.project.cashier_system.domains.SaleItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

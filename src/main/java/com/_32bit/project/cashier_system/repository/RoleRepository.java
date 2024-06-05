@@ -1,6 +1,6 @@
-package com._32bit.project.cashier_system.role;
+package com._32bit.project.cashier_system.repository;
 
-import com._32bit.project.cashier_system.role.Role;
+import com._32bit.project.cashier_system.domains.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

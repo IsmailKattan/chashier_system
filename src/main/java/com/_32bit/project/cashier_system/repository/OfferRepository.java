@@ -1,6 +1,7 @@
-package com._32bit.project.cashier_system.offer;
+package com._32bit.project.cashier_system.repository;
 
 
+import com._32bit.project.cashier_system.domains.Offer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

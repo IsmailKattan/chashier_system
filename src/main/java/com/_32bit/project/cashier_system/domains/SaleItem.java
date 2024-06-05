@@ -1,7 +1,7 @@
-package com._32bit.project.cashier_system.saleItem;
+package com._32bit.project.cashier_system.domains;
 
-import com._32bit.project.cashier_system.product.Product;
-import com._32bit.project.cashier_system.sale.Sale;
+import com._32bit.project.cashier_system.domains.Product;
+import com._32bit.project.cashier_system.domains.Sale;
 import jakarta.persistence.*;
 
 @Entity
