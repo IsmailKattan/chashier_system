@@ -1,9 +1,16 @@
 package com._32bit.project.cashier_system.domains;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Table(name = "sale_item")
+@Getter
+@Setter
+@Builder
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
 public class SaleItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,9 +20,15 @@ public class SaleItem {
     @Column(nullable = false)
     private Double quantity;
 
-    private Double value;
+    private Double total;
 
-    private Boolean deleted;
+    @Column(name = "discount_rate")
+    private Double discountRate;
+
+    @Column(name = "discounted_price")
+    private Double discountedPrice;
+
+    private Boolean deleted = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sale")
@@ -26,72 +39,6 @@ public class SaleItem {
     private Product product;
 
 
-    public SaleItem() {
-        this.deleted = false;
-    }
-
-    public SaleItem(Double quantity, Sale sale, Product product) {
-        this.quantity = quantity;
-        this.deleted = false;
-        this.sale = sale;
-        this.product = product;
-        this.value = this.quantity * this.product.getPrice();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Double getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Double quantity) {
-        this.quantity = quantity;
-    }
-
-    public Double getValue() {
-        return value;
-    }
-
-    public void setValue(Double value) {
-        this.value = value;
-    }
-
-    public Boolean getDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(Boolean deleted) {
-        this.deleted = deleted;
-    }
-
-    public Sale getSale() {
-        return sale;
-    }
-
-    public void setSale(Sale sale) {
-        this.sale = sale;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
 
 
-    @Override
-    public String toString() {
-        return "SaleItem{" +
-                "id=" + id +
-                ", quantity=" + quantity +
-                ", value=" + value +
-                ", deleted=" + deleted +
-                ", sale=" + sale +
-                ", product=" + product +
-                '}';
-    }
 }
