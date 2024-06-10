@@ -33,11 +33,11 @@ public class Offer {
 
     @Temporal(TemporalType.DATE)
     @Column(name = "insertion_date", nullable = false)
-    private Date insertionsDate;
+    private Date insertionDate;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "start_date",nullable = false)
-    private Date starDate;
+    private Date startDate;
     @Temporal(TemporalType.DATE)
     @Column(name = "end_date",nullable = false)
     private Date endDate;

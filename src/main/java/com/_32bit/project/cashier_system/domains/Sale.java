@@ -43,6 +43,8 @@ public class Sale {
 
     private Boolean deleted = false;
 
+    private Boolean isDiscounted = false;
+
     @Column(name = "discount_rate")
     private Double discountRate;
 
