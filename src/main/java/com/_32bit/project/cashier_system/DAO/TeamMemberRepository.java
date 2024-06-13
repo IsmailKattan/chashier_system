@@ -12,7 +12,7 @@ public interface TeamMemberRepository extends JpaRepository<TeamMember,Long> {
     Optional<TeamMember> findByIdAndDeleted(Long id, Boolean deleted);
     Optional<TeamMember> findByFirstnameAndLastname(String firstname,String lastname);
     Optional<TeamMember> findByFirstnameOrLastname(String firstname,String lastname);
-    Optional<TeamMember> findByUsernameOrEmailOrPhoneNumber(String username,String email,String phoneNumber);
+    Optional<TeamMember> findByUsername(String username);
     Optional<TeamMember> findByDeleted(Boolean deleted);
     Boolean existsByUsername(String username);
     Boolean existsByEmail(String email);
