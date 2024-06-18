@@ -32,10 +32,10 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/admin").hasRole("ADMIN");
-                    auth.requestMatchers("/manager").hasRole("MANAGER");
-                    auth.requestMatchers("/cashier").hasRole("CASHIER");
-                    auth.requestMatchers("/login/**","/register/**").permitAll();
+                    auth.requestMatchers("/admin/**").hasRole("ADMIN");
+                    auth.requestMatchers("/manager/**").hasRole("MANAGER");
+                    auth.requestMatchers("/cashier/**").hasRole("CASHIER");
+                    auth.requestMatchers("/login/**").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .userDetailsService(userDetailService)

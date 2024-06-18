@@ -1,7 +1,6 @@
 package com._32bit.project.cashier_system.DTO;
 
 
-import com._32bit.project.cashier_system.domains.SalePoint;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
