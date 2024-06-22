@@ -1,7 +1,7 @@
 package com._32bit.project.cashier_system.DAO;
 
 import com._32bit.project.cashier_system.domains.Sale;
-import com._32bit.project.cashier_system.enums.PaymentType;
+import com._32bit.project.cashier_system.domains.enums.PaymentType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

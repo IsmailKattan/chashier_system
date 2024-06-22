@@ -1,6 +1,6 @@
 package com._32bit.project.cashier_system.domains;
 
-import com._32bit.project.cashier_system.enums.PaymentType;
+import com._32bit.project.cashier_system.domains.enums.PaymentType;
 import jakarta.persistence.*;
 import lombok.*;
 

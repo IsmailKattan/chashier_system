@@ -1,7 +1,6 @@
 package com._32bit.project.cashier_system.domains;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.sql.Time;

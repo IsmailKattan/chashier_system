@@ -1,6 +1,6 @@
 package com._32bit.project.cashier_system.domains;
 
-import com._32bit.project.cashier_system.enums.Unit;
+import com._32bit.project.cashier_system.domains.enums.Unit;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

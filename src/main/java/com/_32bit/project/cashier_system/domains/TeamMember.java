@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TeamMember implements UserDetails {
+public class TeamMember {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,24 +45,6 @@ public class TeamMember implements UserDetails {
     @Size(max = 40)
     private String lastname;
 
-    @NotBlank
-    @Size(max = 40)
-    private String username;
-
-    @Column(name = "phone_number")
-    @NaturalId
-    @Size(max = 40)
-    private String phoneNumber;
-
-    @NotBlank
-    @Email
-    @NaturalId
-    @Size(max = 40)
-    private String email;
-
-    @NotBlank
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$")
-    private String password;
 
     @Column(name = "insertion_date")
     @Temporal(TemporalType.DATE)
@@ -74,11 +56,8 @@ public class TeamMember implements UserDetails {
 
     private Boolean deleted = false;
 
-    @ManyToMany
-    @JoinTable(name = "member_roles",
-    joinColumns = @JoinColumn(name = "member_id"),
-    inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles = new HashSet<>();
+    @OneToOne
+    private UserCredential userCredential;
 
     @OneToMany(mappedBy = "insertedBy",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Product> products = new ArrayList<>();
@@ -96,32 +75,5 @@ public class TeamMember implements UserDetails {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "salePoint")
     private SalePoint salePoint;
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
 }
 

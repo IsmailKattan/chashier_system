@@ -1,13 +1,9 @@
 package com._32bit.project.cashier_system.domains;
 
+import com._32bit.project.cashier_system.domains.enums.ERole;
 import jakarta.persistence.*;
-import jakarta.persistence.criteria.Root;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.*;
-
-import java.util.HashSet;
-import java.util.Set;
 
 
 @Entity
@@ -19,6 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Role {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false)
@@ -26,11 +23,8 @@ public class Role {
 
     @Column(nullable = false)
     @NotBlank
-    @Size(max = 40)
-    private String name;
-
-    @ManyToMany(mappedBy = "roles",fetch = FetchType.LAZY)
-    private Set<TeamMember> members = new HashSet<>();
+    @Enumerated(EnumType.STRING)
+    private ERole name;
 
     private Boolean deleted = false;
 }
