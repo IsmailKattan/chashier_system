@@ -30,11 +30,11 @@ public class SaleItem {
 
     private Boolean deleted = false;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "sale")
     private Sale sale;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "product")
     private Product product;
 

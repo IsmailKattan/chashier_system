@@ -13,6 +13,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -48,15 +50,16 @@ public class TeamMember {
 
     @Column(name = "insertion_date")
     @Temporal(TemporalType.DATE)
-    private Date insertionDate;
+    private LocalDate insertionDate;
 
     @Column(name = "insertion_Time")
     @Temporal(TemporalType.TIME)
-    private Time insertionTime;
+    private LocalTime insertionTime;
 
     private Boolean deleted = false;
 
     @OneToOne
+    @JoinColumn(name = "user_credential_id")
     private UserCredential userCredential;
 
     @OneToMany(mappedBy = "insertedBy",cascade = CascadeType.ALL, orphanRemoval = true)

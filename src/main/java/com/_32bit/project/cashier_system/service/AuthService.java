@@ -1,12 +1,12 @@
 package com._32bit.project.cashier_system.service;
 
-import com._32bit.project.cashier_system.DTO.AuthRequestDto;
-
-import java.util.List;
+import com._32bit.project.cashier_system.DTO.teamMember.CreateTeamMemberDto;
+import com._32bit.project.cashier_system.DTO.teamMember.JwtResponseDto;
+import com._32bit.project.cashier_system.DTO.teamMember.LoginInfoDto;
 
 public interface AuthService {
 
-    String login(String username, String password);
+    JwtResponseDto authenticateUser(LoginInfoDto loginInfoDto);
 
-    String signup(String username, String password, List<String> roles);
+    Object registerUser(CreateTeamMemberDto createTeamMemberDto);
 }

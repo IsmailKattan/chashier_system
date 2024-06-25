@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -33,8 +34,14 @@ public class UserCredential implements UserDetails {
 
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    private List<Role> roles;
+    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @JoinTable(name="user_credential_roles",
+            joinColumns = @JoinColumn(name = "user_credential_id"),
+            inverseJoinColumns = @JoinColumn(name = "roles_id"))
+    private List<Role> roles = new ArrayList<>();
+
+    @OneToOne(mappedBy = "userCredential", cascade = CascadeType.ALL)
+    private TeamMember teamMember;
 
     private Boolean deleted;
 
@@ -56,7 +63,7 @@ public class UserCredential implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.email;
+        return this.username;
     }
 
     @Override

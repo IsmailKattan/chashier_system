@@ -1,48 +1,59 @@
 package com._32bit.project.cashier_system.resource;
 
 
-import com._32bit.project.cashier_system.DTO.AuthRequestDto;
-import com._32bit.project.cashier_system.DTO.AuthResponseDto;
-import com._32bit.project.cashier_system.DTO.enums.AuthStatus;
+import com._32bit.project.cashier_system.DAO.UserCredentialRepository;
+import com._32bit.project.cashier_system.DTO.MessageResponse;
+import com._32bit.project.cashier_system.DTO.teamMember.CreateTeamMemberDto;
+import com._32bit.project.cashier_system.DTO.teamMember.JwtResponseDto;
+import com._32bit.project.cashier_system.DTO.teamMember.LoginInfoDto;
 import com._32bit.project.cashier_system.service.AuthService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/admin")
-@RequiredArgsConstructor
+@RequestMapping
 public class AuthResource {
-
     private final AuthService authService;
+    private final UserCredentialRepository userCredentialRepository;
+
+    @Autowired
+    public AuthResource(AuthService authService, UserCredentialRepository userCredentialRepository) {
+        this.authService = authService;
+        this.userCredentialRepository = userCredentialRepository;
+    }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDto> login (@RequestBody AuthRequestDto authRequestDto) {
-        var jwtToken = authService.login(authRequestDto.username(), authRequestDto.password());
-
-        var authResponse = new AuthResponseDto(jwtToken, AuthStatus.LOGIN_SUCCESS);
-
-        return ResponseEntity.status(HttpStatus.OK).body(authResponse);
-
+    public ResponseEntity<?> authenticateUser(@RequestBody LoginInfoDto loginInfoDto) {
+        JwtResponseDto jwtResponseDto = authService.authenticateUser(loginInfoDto);
+        return ResponseEntity.ok(jwtResponseDto);
     }
 
-    @PostMapping("/signup")
-    public ResponseEntity<AuthResponseDto> signup (@RequestBody AuthRequestDto authRequestDto) {
-        try {
-            var jwtToken = authService.signup(authRequestDto.username(),authRequestDto.password(),authRequestDto.roles());
-
-            var authResponseDto = new AuthResponseDto(jwtToken,AuthStatus.USER_CREATED_SUCCESSFULLY);
-
-            return ResponseEntity.status(HttpStatus.OK).body(authResponseDto);
-        } catch (Exception e) {
-            var authResponseDto = new AuthResponseDto(null,AuthStatus.USER_NOT_CREATED);
-
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(authResponseDto);
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody CreateTeamMemberDto createTeamMemberDto) {
+        if (userCredentialRepository.existsByUsername(createTeamMemberDto.getUsername())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: Username is already taken!"));
         }
 
+        if (userCredentialRepository.existsByEmail(createTeamMemberDto.getEmail())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: Email is already in use!"));
+        }
 
+        return ResponseEntity.ok(authService.registerUser(createTeamMemberDto));
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<?> logoutUser() {
+        SecurityContextHolder.clearContext();
+        return ResponseEntity.ok(new MessageResponse("User logged out successfully!"));
+    }
 
 }
