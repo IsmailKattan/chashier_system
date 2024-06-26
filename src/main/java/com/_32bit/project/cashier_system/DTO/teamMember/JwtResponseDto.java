@@ -5,8 +5,6 @@ import lombok.*;
 import java.util.List;
 
 @Data
-@Getter
-@Setter
 @NoArgsConstructor
 @Builder
 public class JwtResponseDto {

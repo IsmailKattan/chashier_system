@@ -36,17 +36,15 @@ public class UserCredentialMapper {
     }
 
     public static UserCredential updateUserCredential(UserCredential userCredential, CreateTeamMemberDto createTeamMemberDto) {
+        List<Role> roles = createTeamMemberDto.getRoles().stream()
+                .map(role -> Role.builder().name(ERole.valueOf(role)).build())
+                .toList();
 
-        List<Role> roles = new ArrayList<>();
-        for (String role: createTeamMemberDto.getRoles()) {
-            roles.add(Role.builder()
-                            .name(ERole.valueOf(role))
-                    .build());
-        }
         userCredential.setEmail(createTeamMemberDto.getEmail());
         userCredential.setPhoneNumber(createTeamMemberDto.getPhoneNumber());
         userCredential.setUsername(createTeamMemberDto.getUsername());
         userCredential.setRoles(roles);
         return userCredential;
     }
+
 }

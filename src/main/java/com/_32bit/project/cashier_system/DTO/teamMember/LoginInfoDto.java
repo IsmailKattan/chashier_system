@@ -2,8 +2,6 @@ package com._32bit.project.cashier_system.DTO.teamMember;
 
 import lombok.*;
 
-@Getter
-@Setter
 @Data
 @Builder
 @AllArgsConstructor

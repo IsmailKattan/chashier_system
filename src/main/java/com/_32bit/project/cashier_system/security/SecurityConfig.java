@@ -36,24 +36,26 @@ public class SecurityConfig {
     private AuthEntryPointJwt unauthorizedHandler;
 
     @Bean
-    public AuthTokenFilter authenticationJwtTokenFilter(){
+    public AuthTokenFilter authenticationJwtTokenFilter() {
         return new AuthTokenFilter();
     }
+
     @Bean
-    public DaoAuthenticationProvider authenticationProvider(){
+    public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
 
         return authProvider;
     }
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -63,13 +65,13 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
-                .exceptionHandling(exception->exception.authenticationEntryPoint(unauthorizedHandler))
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
 
-                .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/api/admin/**").hasRole(ERole.ADMIN.name());
-                    auth.requestMatchers("/api/manager/**").hasRole(ERole.MANAGER.name());
-                    auth.requestMatchers("/api/cashier/**").hasRole(ERole.CASHIER.name());
+//                    auth.requestMatchers("/api/admin/**").hasRole("ADMIN");
+//                    auth.requestMatchers("/api/manager/**").hasRole("MANAGER");
+//                    auth.requestMatchers("/api/cashier/**").hasRole("CASHIER");
                     auth.requestMatchers("/login/**").permitAll();
                     auth.requestMatchers("/register/**").permitAll();
                     auth.requestMatchers("/error").permitAll();
@@ -81,30 +83,4 @@ public class SecurityConfig {
 
         return http.build();
     }
-
-    @Bean
-    public UserDetailsService users() {
-        PasswordEncoder encoder = passwordEncoder();
-        UserDetails admin = User.builder()
-                .username("32-bit-admin")
-                .password("32-bit")
-                .roles("ADMIN", "MANAGER", "CASHIER")
-                .build();
-
-        UserDetails manager = User.builder()
-                .username("32-bit-manager")
-                .password("32-bit")
-                .roles("MANAGER", "CASHIER")
-                .build();
-
-        UserDetails cashier = User.builder()
-                .username("32-bit-cashier")
-                .password("32-bit")
-                .roles("CASHIER")
-                .build();
-
-        return new InMemoryUserDetailsManager(admin, manager, cashier);
-    }
-
-
 }

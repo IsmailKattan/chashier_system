@@ -4,8 +4,6 @@ package com._32bit.project.cashier_system.DTO.teamMember;
 import lombok.*;
 
 @Data
-@Getter
-@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

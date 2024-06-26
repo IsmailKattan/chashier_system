@@ -22,7 +22,6 @@ public class Role {
     private Long id;
 
     @Column(nullable = false)
-    @NotBlank
     @Enumerated(EnumType.STRING)
     private ERole name;
 

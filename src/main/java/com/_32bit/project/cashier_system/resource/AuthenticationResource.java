@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping
-public class AuthResource {
+public class AuthenticationResource {
     private final AuthService authService;
     private final UserCredentialRepository userCredentialRepository;
 
     @Autowired
-    public AuthResource(AuthService authService, UserCredentialRepository userCredentialRepository) {
+    public AuthenticationResource(AuthService authService, UserCredentialRepository userCredentialRepository) {
         this.authService = authService;
         this.userCredentialRepository = userCredentialRepository;
     }

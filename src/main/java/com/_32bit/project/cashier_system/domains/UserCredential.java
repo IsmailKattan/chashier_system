@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "user_credential")
@@ -18,7 +19,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserCredential implements UserDetails {
+public class UserCredential implements UserDetails{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,6 +35,9 @@ public class UserCredential implements UserDetails {
 
     private String password;
 
+    @OneToMany(mappedBy = "user")
+    private List<Token> tokens;
+
     @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JoinTable(name="user_credential_roles",
             joinColumns = @JoinColumn(name = "user_credential_id"),
@@ -46,39 +50,27 @@ public class UserCredential implements UserDetails {
     private Boolean deleted;
 
 
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<SimpleGrantedAuthority> roleList =roles
-                .stream()
+        return this.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName().name()))
-                .toList();
-        return roleList;
-    }
+                .collect(Collectors.toList());
 
-    @Override
-    public String getPassword() {
-        return this.password;
-    }
-
-    @Override
-    public String getUsername() {
-        return this.username;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return false;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return false;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return false;
     }
 
     @Override

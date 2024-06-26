@@ -4,6 +4,7 @@ import com._32bit.project.cashier_system.DTO.TeamMemberDTO;
 import com._32bit.project.cashier_system.DTO.teamMember.CreateTeamMemberDto;
 import com._32bit.project.cashier_system.DTO.teamMember.TeamMemberInfoDto;
 import com._32bit.project.cashier_system.domains.TeamMember;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +19,11 @@ import java.util.stream.Collectors;
 public class TeamMemberMapper {
 
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public TeamMemberMapper(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public static TeamMember createTeamMemberDtoToTeamMemberDomain(CreateTeamMemberDto createTeamMemberDto) {
 

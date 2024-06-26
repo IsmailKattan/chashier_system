@@ -5,12 +5,12 @@ import lombok.*;
 
 import java.util.List;
 
-@Getter
-@Setter
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class CreateTeamMemberDto {
 
     private String firstname;
