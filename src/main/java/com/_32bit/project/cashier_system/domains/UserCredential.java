@@ -35,8 +35,6 @@ public class UserCredential implements UserDetails{
 
     private String password;
 
-    @OneToMany(mappedBy = "user")
-    private List<Token> tokens;
 
     @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JoinTable(name="user_credential_roles",

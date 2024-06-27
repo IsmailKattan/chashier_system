@@ -15,6 +15,8 @@ import com._32bit.project.cashier_system.mapper.UserCredentialMapper;
 import com._32bit.project.cashier_system.security.jwt.JwtUtils;
 import com._32bit.project.cashier_system.security.service.UserDetailsImpl;
 import com._32bit.project.cashier_system.service.AuthService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,6 +31,8 @@ import java.util.List;
 
 @Service
 public class AuthServiceImpl implements AuthService {
+
+    private final static Logger logger = LogManager.getLogger(AuthServiceImpl.class);
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
@@ -59,7 +63,7 @@ public class AuthServiceImpl implements AuthService {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
         List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
-        System.out.println(roles);
+        logger.info("User: " + userDetails.getUsername() + ",Has roles: " + userDetails.getAuthorities() + " logged in successfully");
         return new JwtResponseDto(jwt,userDetails.getId(),userDetails.getUsername(),userDetails.getEmail(),roles);
 
     }
@@ -69,29 +73,35 @@ public class AuthServiceImpl implements AuthService {
 
         List<String> strRoles = createTeamMemberDto.getRoles();
         List<Role> roles = new ArrayList<>();
-        if(createTeamMemberDto.getRoles()!=null){
+        if(createTeamMemberDto.getRoles()!=null && !createTeamMemberDto.getRoles().isEmpty()) {
             strRoles.forEach(role->{
                 switch (role) {
                     case "admin" :
-                        Role adminRole = roleRepository.findByNameAndDeleted(ERole.ADMIN,false)
+                        Role adminRole = roleRepository.findByNameAndDeleted(ERole.ROLE_ADMIN,false)
                                 .orElseThrow(()->new RuntimeException("Error: role ADMIN not found"));
                         roles.add(adminRole);
 
                         break;
                     case "manager":
-                        Role managerRole = roleRepository.findByNameAndDeleted(ERole.MANAGER,false)
+                        Role managerRole = roleRepository.findByNameAndDeleted(ERole.ROLE_MANAGER,false)
                                 .orElseThrow(()->new RuntimeException("Error: role Manager not found"));
                         roles.add(managerRole);
 
                         break;
                     case "cashier":
-                        Role cashierRole = roleRepository.findByNameAndDeleted(ERole.CASHIER,false)
+                        Role cashierRole = roleRepository.findByNameAndDeleted(ERole.ROLE_CASHIER,false)
                                 .orElseThrow(() -> new RuntimeException("Error: role CASHIER not found"));
                         roles.add(cashierRole);
 
                         break;
                 }
             });
+        } else if (createTeamMemberDto.getRoles().isEmpty()) {
+            throw new RuntimeException("Error: user has no role!");
+        }
+
+        if (roles.isEmpty()) {
+            throw new RuntimeException("Error: unable role/roles");
         }
 
         TeamMember teamMember = TeamMemberMapper.createTeamMemberDtoToTeamMemberDomain(createTeamMemberDto);
@@ -101,7 +111,9 @@ public class AuthServiceImpl implements AuthService {
         userCredentialRepository.save(userCredential);
         teamMember.setUserCredential(userCredential);
         teamMemberRepository.save(teamMember);
-
+        logger.info("User: " + userCredential.getUsername() +
+                ", Has Roles: "+userCredential.getRoles().stream().map(Role::getName).toList()
+                + " registered successfully");
 
         return TeamMemberMapper.toTeamMemberInfoDto(teamMember);
     }

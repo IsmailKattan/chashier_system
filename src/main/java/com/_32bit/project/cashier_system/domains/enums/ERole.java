@@ -2,9 +2,9 @@ package com._32bit.project.cashier_system.domains.enums;
 
 public enum ERole {
 
-    ADMIN,
+    ROLE_ADMIN,
 
-    MANAGER,
+    ROLE_MANAGER,
 
-    CASHIER
+    ROLE_CASHIER
 }

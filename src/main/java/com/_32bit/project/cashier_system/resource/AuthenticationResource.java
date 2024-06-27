@@ -14,10 +14,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @RestController
 @RequestMapping
 public class AuthenticationResource {
+
+    private static final Logger logger = LogManager.getLogger(AuthenticationResource.class);
     private final AuthService authService;
     private final UserCredentialRepository userCredentialRepository;
 
@@ -36,12 +40,14 @@ public class AuthenticationResource {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody CreateTeamMemberDto createTeamMemberDto) {
         if (userCredentialRepository.existsByUsername(createTeamMemberDto.getUsername())) {
+            logger.warn("Username is already taken!");
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Error: Username is already taken!"));
         }
 
         if (userCredentialRepository.existsByEmail(createTeamMemberDto.getEmail())) {
+            logger.warn("Email is already in use!");
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Error: Email is already in use!"));

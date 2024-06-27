@@ -20,17 +20,17 @@ public class HelloWorldResource {
         return "see you later";
     }
     @GetMapping("/manager")
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasAuthority('ROLE_MANAGER')")
     public String helloManager(){
         return "Hello manager";
     }
     @GetMapping("/admin")
-    @PreAuthorize("hasRole('ADMIN)")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public String helloAdmin(){
         return "Hello admin";
     }
     @GetMapping("/cashier")
-    @PreAuthorize("hasRole('CASHIER')")
+    @PreAuthorize("hasAuthority('ROLE_CASHIER')")
     public String helloCashier(){
         return "Hello cashier";
     }
