@@ -3,9 +3,9 @@ package com._32bit.project.cashier_system.resource;
 
 import com._32bit.project.cashier_system.DAO.UserCredentialRepository;
 import com._32bit.project.cashier_system.DTO.MessageResponse;
-import com._32bit.project.cashier_system.DTO.teamMember.CreateTeamMemberDto;
-import com._32bit.project.cashier_system.DTO.teamMember.JwtResponseDto;
-import com._32bit.project.cashier_system.DTO.teamMember.LoginInfoDto;
+import com._32bit.project.cashier_system.DTO.teamMember.request.CreateTeamMemberDto;
+import com._32bit.project.cashier_system.DTO.teamMember.response.JwtResponseDto;
+import com._32bit.project.cashier_system.DTO.teamMember.request.LoginInfoDto;
 import com._32bit.project.cashier_system.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

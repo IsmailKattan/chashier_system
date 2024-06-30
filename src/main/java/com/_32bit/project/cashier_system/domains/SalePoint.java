@@ -31,11 +31,11 @@ public class SalePoint {
     @Temporal(TemporalType.TIME)
     private Time creatingTime;
 
-    private String Address;
+    private String address;
 
     private Boolean deleted = false;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "createdBy")
     private TeamMember createdBy;
 

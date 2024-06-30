@@ -1,4 +1,4 @@
-package com.bit.project.cashier_system;
+package com._32bit.project.cashier_system;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

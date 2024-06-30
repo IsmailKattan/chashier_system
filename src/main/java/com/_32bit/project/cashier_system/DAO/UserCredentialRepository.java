@@ -9,6 +9,8 @@ import java.util.Optional;
 @Repository
 public interface UserCredentialRepository extends JpaRepository<UserCredential,Long> {
 
+    Optional<UserCredential> findByIdAndDeleted(Long id, boolean b);
+
     Optional<UserCredential> findByEmail(String email);
 
     Optional<UserCredential> findByUsername(String username);

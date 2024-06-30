@@ -2,9 +2,9 @@ package com._32bit.project.cashier_system.service.impl;
 
 import com._32bit.project.cashier_system.DAO.TeamMemberRepository;
 import com._32bit.project.cashier_system.DAO.UserCredentialRepository;
-import com._32bit.project.cashier_system.DTO.teamMember.CreateTeamMemberDto;
-import com._32bit.project.cashier_system.DTO.teamMember.TeamMemberInfoDto;
-import com._32bit.project.cashier_system.DTO.teamMember.UserCredentialInfoDto;
+import com._32bit.project.cashier_system.DTO.teamMember.request.CreateTeamMemberDto;
+import com._32bit.project.cashier_system.DTO.teamMember.response.TeamMemberInfoDto;
+import com._32bit.project.cashier_system.DTO.teamMember.response.UserCredentialInfoDto;
 import com._32bit.project.cashier_system.domains.TeamMember;
 import com._32bit.project.cashier_system.domains.UserCredential;
 import com._32bit.project.cashier_system.mapper.TeamMemberMapper;

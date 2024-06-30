@@ -1,14 +1,12 @@
 package com._32bit.project.cashier_system.resource;
 
 
-import com._32bit.project.cashier_system.DTO.TeamMemberDTO;
-import com._32bit.project.cashier_system.DTO.teamMember.CreateTeamMemberDto;
-import com._32bit.project.cashier_system.DTO.teamMember.TeamMemberInfoDto;
-import com._32bit.project.cashier_system.DTO.teamMember.UserCredentialInfoDto;
+import com._32bit.project.cashier_system.DTO.teamMember.request.CreateTeamMemberDto;
+import com._32bit.project.cashier_system.DTO.teamMember.response.TeamMemberInfoDto;
+import com._32bit.project.cashier_system.DTO.teamMember.response.UserCredentialInfoDto;
 import com._32bit.project.cashier_system.service.TeamMemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.annotation.CreatedBy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

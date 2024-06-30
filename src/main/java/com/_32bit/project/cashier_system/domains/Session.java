@@ -2,8 +2,11 @@ package com._32bit.project.cashier_system.domains;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.cglib.core.Local;
 
 import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 
@@ -51,7 +54,7 @@ public class Session {
     @JoinColumn(name = "openedBy")
     private TeamMember openedBy;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "salePoint")
     private SalePoint salePoint;
 

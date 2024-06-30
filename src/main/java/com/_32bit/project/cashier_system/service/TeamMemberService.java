@@ -1,9 +1,8 @@
 package com._32bit.project.cashier_system.service;
 
-import com._32bit.project.cashier_system.DTO.teamMember.CreateTeamMemberDto;
-import com._32bit.project.cashier_system.DTO.teamMember.TeamMemberInfoDto;
-import com._32bit.project.cashier_system.DTO.teamMember.UserCredentialInfoDto;
-import org.springframework.http.ResponseEntity;
+import com._32bit.project.cashier_system.DTO.teamMember.request.CreateTeamMemberDto;
+import com._32bit.project.cashier_system.DTO.teamMember.response.TeamMemberInfoDto;
+import com._32bit.project.cashier_system.DTO.teamMember.response.UserCredentialInfoDto;
 
 import java.util.List;
 

@@ -50,11 +50,11 @@ public class TeamMember {
 
     @Column(name = "insertion_date")
     @Temporal(TemporalType.DATE)
-    private LocalDate insertionDate;
+    private Date insertionDate;
 
     @Column(name = "insertion_Time")
     @Temporal(TemporalType.TIME)
-    private LocalTime insertionTime;
+    private Time insertionTime;
 
     private Boolean deleted = false;
 
@@ -75,7 +75,7 @@ public class TeamMember {
     private List<SalePoint> salePoints = new ArrayList<>();
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "salePoint")
     private SalePoint salePoint;
 }

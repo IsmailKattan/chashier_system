@@ -1,16 +1,12 @@
 package com._32bit.project.cashier_system.mapper;
 
-import com._32bit.project.cashier_system.DTO.teamMember.CreateTeamMemberDto;
-import com._32bit.project.cashier_system.DTO.teamMember.UserCredentialInfoDto;
+import com._32bit.project.cashier_system.DTO.teamMember.request.CreateTeamMemberDto;
+import com._32bit.project.cashier_system.DTO.teamMember.response.UserCredentialInfoDto;
 import com._32bit.project.cashier_system.domains.Role;
 import com._32bit.project.cashier_system.domains.UserCredential;
 import com._32bit.project.cashier_system.domains.enums.ERole;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class UserCredentialMapper {
 

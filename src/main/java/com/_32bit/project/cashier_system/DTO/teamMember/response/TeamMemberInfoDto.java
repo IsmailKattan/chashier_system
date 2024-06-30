@@ -1,4 +1,4 @@
-package com._32bit.project.cashier_system.DTO.teamMember;
+package com._32bit.project.cashier_system.DTO.teamMember.response;
 
 
 import lombok.*;
@@ -17,7 +17,7 @@ public class TeamMemberInfoDto {
     private Long id;
     private String firstname;
     private String lastname;
-    private LocalDate insertionDate;
-    private LocalTime insertionTime;
+    private Date insertionDate;
+    private Time insertionTime;
     private List<String> roles;
 }

@@ -1,4 +1,4 @@
-package com._32bit.project.cashier_system.DTO.teamMember;
+package com._32bit.project.cashier_system.DTO.teamMember.request;
 
 import lombok.*;
 
