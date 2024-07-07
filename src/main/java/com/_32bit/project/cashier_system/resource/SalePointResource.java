@@ -50,46 +50,16 @@ public class SalePointResource {
         return salePointService.updateSalePoint(id, request);
     }
 
-    @GetMapping("/delete-point/{id}")
+    @DeleteMapping("/delete-point/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> deleteSalePoint(@PathVariable Long id){
         return salePointService.deleteSalePoint(id);
     }
 
-    @GetMapping("/restore-point/{id}")
+    @PatchMapping("/restore-point/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> restoreSalePoint(@PathVariable Long id){
         return salePointService.restoreSalePoint(id);
-    }
-
-    @GetMapping("/add-team-member/{salePointId}/{teamMemberId}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-    public ResponseEntity<?> addTeamMember(@PathVariable Long salePointId, @PathVariable Long teamMemberId , HttpServletRequest httpRequest){
-        String token = httpRequest.getHeader("Authorization");
-        return salePointService.addTeamMember(salePointId, teamMemberId,token);
-    }
-
-    @GetMapping("/remove-team-member/{salePointId}/{teamMemberId}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-    public ResponseEntity<?> removeTeamMember(@PathVariable Long salePointId, @PathVariable Long teamMemberId, HttpServletRequest httpRequest){
-        String token = httpRequest.getHeader("Authorization");
-        return salePointService.removeTeamMember(salePointId, teamMemberId,token);
-    }
-
-    // TODO: have to test
-
-    @GetMapping("/add-session/{salePointId}/{sessionId}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-    public ResponseEntity<?> addSession(@PathVariable Long salePointId, @PathVariable Long sessionId){
-        return salePointService.addSession(salePointId, sessionId);
-    }
-
-    // TODO: have to test
-
-    @GetMapping("/remove-session/{salePointId}/{sessionId}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-    public ResponseEntity<?> removeSession(@PathVariable Long salePointId, @PathVariable Long sessionId){
-        return salePointService.removeSession(salePointId, sessionId);
     }
 
     @GetMapping("/all-points")

@@ -20,25 +20,25 @@ import java.util.List;
 @NoArgsConstructor
 public class Session {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id" ,updatable = false)
     private Long id;
 
     @Column(name = "opening_date")
     @Temporal(TemporalType.DATE)
-    private Date openingDate;
+    private LocalDate openingDate;
 
     @Column(name = "opening_time")
     @Temporal(TemporalType.TIME)
-    private Time openingTime;
+    private LocalTime openingTime;
 
     @Column(name = "closing_date")
     @Temporal(TemporalType.DATE)
-    private Date closingDate;
+    private LocalDate closingDate;
 
     @Column(name = "closing_time")
     @Temporal(TemporalType.TIME)
-    private Time closingTime;
+    private LocalTime closingTime;
 
     @Column(name = "opening_cash")
     private Double openingCash;
@@ -46,13 +46,26 @@ public class Session {
     @Column(name = "closing_cash")
     private Double closingCash;
 
-    private Double balance;
+    @Column(name = "current_cash")
+    private Double salesCash;
 
-    private Boolean deleted = false;
+    @Column(name = "opening_closing_balance")
+    private Double openingClosingBalance;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @Column(name = "expected_real_cash_balance")
+    private Double exceptedRealCashBalance;
+
+    private Boolean deleted;
+
+    private Boolean closed = false;
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "openedBy")
     private TeamMember openedBy;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "closedBy")
+    private TeamMember closedBy;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "salePoint")

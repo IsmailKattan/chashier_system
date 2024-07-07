@@ -1,8 +1,6 @@
 package com._32bit.project.cashier_system.DTO.salePoint;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.sql.Time;
 import java.time.LocalDate;
@@ -10,12 +8,14 @@ import java.time.LocalTime;
 import java.util.Date;
 
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 @Builder
 public class SessionOfSalePoint {
     private Long id;
-    private Date openingDate;
-    private Time openingTime;
-    private Date closingDate;
-    private Time closingTime;
+    private LocalDate openingDate;
+    private LocalTime openingTime;
+    private LocalDate closingDate;
+    private LocalTime closingTime;
 }

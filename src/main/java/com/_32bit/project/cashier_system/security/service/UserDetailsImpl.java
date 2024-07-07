@@ -1,10 +1,8 @@
 package com._32bit.project.cashier_system.security.service;
 
-import com._32bit.project.cashier_system.domains.UserCredential;
+import com._32bit.project.cashier_system.domains.TeamMember;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,7 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@Data
+
 @Getter
 @Setter
 public class UserDetailsImpl implements UserDetails {
@@ -35,7 +33,7 @@ public class UserDetailsImpl implements UserDetails {
         this.authorities = authorities;
     }
 
-    public static UserDetailsImpl build(UserCredential user){
+    public static UserDetailsImpl build(TeamMember user){
         List<GrantedAuthority> authorities =
                 user.getRoles()
                         .stream()

@@ -2,7 +2,8 @@ package com._32bit.project.cashier_system.DTO.teamMember.request;
 
 import lombok.*;
 
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @ToString

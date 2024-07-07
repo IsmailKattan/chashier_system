@@ -18,14 +18,6 @@ public interface SalePointService {
 
     ResponseEntity<?> restoreSalePoint(Long salePointId);
 
-    ResponseEntity<?> addTeamMember(Long salePointId, Long teamMemberId, String token);
-
-    ResponseEntity<?> removeTeamMember(Long salePointId, Long teamMemberId,String token);
-
-    ResponseEntity<?> addSession(Long salePointId, Long sessionId);
-
-    ResponseEntity<?> removeSession(Long salePointId, Long sessionId);
-
     ResponseEntity<?> getAllSalePoints();
 
     ResponseEntity<?> getAllDeletedSalePoints();

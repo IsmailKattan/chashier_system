@@ -13,4 +13,6 @@ public interface SessionRepository extends JpaRepository<Session,Long> {
     Optional<Session> findByIdAndDeleted(Long id, Boolean Deleted );
 
     List<Session> findAllBySalePointAndDeleted(SalePoint salePoint, Boolean deleted);
+
+    List<Session> findAllByDeleted(Boolean deleted);
 }

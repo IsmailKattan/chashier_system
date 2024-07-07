@@ -1,12 +1,12 @@
 package com._32bit.project.cashier_system.resource;
 
 
-import com._32bit.project.cashier_system.DAO.UserCredentialRepository;
 import com._32bit.project.cashier_system.DTO.MessageResponse;
 import com._32bit.project.cashier_system.DTO.teamMember.request.CreateTeamMemberDto;
 import com._32bit.project.cashier_system.DTO.teamMember.response.JwtResponseDto;
 import com._32bit.project.cashier_system.DTO.teamMember.request.LoginInfoDto;
 import com._32bit.project.cashier_system.service.AuthService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,17 +19,11 @@ import org.apache.logging.log4j.Logger;
 
 @RestController
 @RequestMapping
+@RequiredArgsConstructor
 public class AuthenticationResource {
 
     private static final Logger logger = LogManager.getLogger(AuthenticationResource.class);
     private final AuthService authService;
-    private final UserCredentialRepository userCredentialRepository;
-
-    @Autowired
-    public AuthenticationResource(AuthService authService, UserCredentialRepository userCredentialRepository) {
-        this.authService = authService;
-        this.userCredentialRepository = userCredentialRepository;
-    }
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginInfoDto loginInfoDto) {
@@ -39,21 +33,7 @@ public class AuthenticationResource {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody CreateTeamMemberDto createTeamMemberDto) {
-        if (userCredentialRepository.existsByUsername(createTeamMemberDto.getUsername())) {
-            logger.warn("Username is already taken!");
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Username is already taken!"));
-        }
-
-        if (userCredentialRepository.existsByEmail(createTeamMemberDto.getEmail())) {
-            logger.warn("Email is already in use!");
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Email is already in use!"));
-        }
-
-        return ResponseEntity.ok(authService.registerUser(createTeamMemberDto));
+        return authService.registerUser(createTeamMemberDto);
     }
 
     @PostMapping("/logout")

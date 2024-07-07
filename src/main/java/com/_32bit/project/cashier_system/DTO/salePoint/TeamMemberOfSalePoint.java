@@ -1,12 +1,12 @@
 package com._32bit.project.cashier_system.DTO.salePoint;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 @AllArgsConstructor
-@Data
+@Getter
+@NoArgsConstructor
+@Setter
 @Builder
 public class TeamMemberOfSalePoint {
     private Long id;

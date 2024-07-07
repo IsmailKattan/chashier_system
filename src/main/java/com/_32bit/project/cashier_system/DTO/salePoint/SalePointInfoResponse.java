@@ -1,9 +1,7 @@
 package com._32bit.project.cashier_system.DTO.salePoint;
 
 import com._32bit.project.cashier_system.DTO.MessageResponse;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.sql.Time;
 import java.time.LocalDate;
@@ -13,7 +11,9 @@ import java.util.List;
 
 @AllArgsConstructor
 @Builder
-@Data
+@NoArgsConstructor
+@Getter
+@Setter
 public class SalePointInfoResponse {
 
     private Long id;

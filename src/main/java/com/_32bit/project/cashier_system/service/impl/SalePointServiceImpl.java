@@ -3,7 +3,6 @@ package com._32bit.project.cashier_system.service.impl;
 import com._32bit.project.cashier_system.DAO.SalePointRepository;
 import com._32bit.project.cashier_system.DAO.SessionRepository;
 import com._32bit.project.cashier_system.DAO.TeamMemberRepository;
-import com._32bit.project.cashier_system.DAO.UserCredentialRepository;
 import com._32bit.project.cashier_system.DTO.ObjectWithMessageResponse;
 import com._32bit.project.cashier_system.DTO.MessageResponse;
 import com._32bit.project.cashier_system.DTO.salePoint.CreateSalePointRequest;
@@ -13,7 +12,6 @@ import com._32bit.project.cashier_system.DTO.salePoint.TeamMemberOfSalePoint;
 import com._32bit.project.cashier_system.domains.SalePoint;
 import com._32bit.project.cashier_system.domains.Session;
 import com._32bit.project.cashier_system.domains.TeamMember;
-import com._32bit.project.cashier_system.domains.UserCredential;
 import com._32bit.project.cashier_system.mapper.SalePointMapper;
 import com._32bit.project.cashier_system.security.jwt.JwtUtils;
 import com._32bit.project.cashier_system.service.SalePointService;
@@ -24,16 +22,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class SalePointServiceImpl implements SalePointService {
 
-    private final static Logger logger = LogManager.getLogger(AuthServiceImpl.class);
+    private final static Logger logger = LogManager.getLogger(SalePointServiceImpl.class);
 
     private final SalePointRepository salePointRepository;
 
-    private final UserCredentialRepository userCredentialRepository;
 
     private final TeamMemberRepository teamMemberRepository;
 
@@ -54,12 +52,7 @@ public class SalePointServiceImpl implements SalePointService {
         }
         if (salePointRepository.findByIdAndDeleted(salePointId,false).isEmpty()) {
             logger.warn("Sale point: Sale point with id: " + salePointId + " not found");
-            return ResponseEntity.badRequest().body(
-                    new ObjectWithMessageResponse(
-                            new MessageResponse("Sale point with id: " + salePointId + " not found"),
-                            null
-                    )
-            );
+            return ResponseEntity.notFound().build();
         }
         SalePoint salePoint = salePointRepository.findByIdAndDeleted(salePointId,false).orElseThrow(()->new RuntimeException("Sale point not found"));
         SalePointInfoResponse salePointInfoResponse = SalePointMapper.toSalePointInfoResponseDTO(salePoint);
@@ -105,7 +98,7 @@ public class SalePointServiceImpl implements SalePointService {
                     )
             );
         }
-        if (userCredentialRepository.findByUsername(username).isEmpty()) {
+        if (teamMemberRepository.findByUsername(username).isEmpty()) {
             logger.warn("Sale point: User not found");
             return ResponseEntity.badRequest().body(
                     new ObjectWithMessageResponse(
@@ -114,28 +107,10 @@ public class SalePointServiceImpl implements SalePointService {
                     )
             );
         }
-        UserCredential userCredential = userCredentialRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
-        if (teamMemberRepository.findById(userCredential.getTeamMember().getId()).isEmpty()) {
-            logger.warn("Sale point: Team member not found");
-            return ResponseEntity.badRequest().body(
-                    new ObjectWithMessageResponse(
-                            new MessageResponse("Team member not found"),
-                            null
-                    )
-            );
-        }
-        if (teamMemberRepository.findById(userCredential.getTeamMember().getId()).isEmpty()) {
-            logger.warn("Sale point: Created by team member not found");
-            return ResponseEntity.badRequest().body(
-                    new ObjectWithMessageResponse(
-                            new MessageResponse("Created by team member not found"),
-                            null
-                    )
-            );
-        }
-        TeamMember createdBy = teamMemberRepository.findById(userCredential.getTeamMember().getId()).orElseThrow(() -> new RuntimeException("Team member not found"));
+        TeamMember teamMember = teamMemberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+
         SalePoint salePoint = SalePointMapper.createRequestToDomain(request);
-        salePoint.setCreatedBy(createdBy);
+        salePoint.setCreatedBy(teamMember);
         var saveSalePoint =  salePointRepository.save(salePoint);
         logger.info("Sale Point: salePoint with id: " + saveSalePoint.getId() +" and name: " + saveSalePoint.getName() + " saved");
         SalePointInfoResponse salePointInfoResponse = SalePointMapper.toSalePointInfoResponseDTO(saveSalePoint);
@@ -247,275 +222,6 @@ public class SalePointServiceImpl implements SalePointService {
     }
 
     @Override
-    public ResponseEntity<?> addTeamMember(Long salePointId, Long teamMemberId,String token) {
-        String tokenWithoutBearer = token.substring(7);
-        String username = jwtUtils.getUsernameFromJwtToken(tokenWithoutBearer);
-        if(username == null){
-            logger.warn("Sale point: Username not found");
-            return ResponseEntity.badRequest().body(
-                    new ObjectWithMessageResponse(
-                            new MessageResponse("Username not found"),
-                            null
-                    )
-            );
-        }
-        if (teamMemberRepository.findById(teamMemberId).isPresent() && userCredentialRepository.findByUsername(username).isPresent()) {
-            if (userCredentialRepository.findByUsername(username).get() == teamMemberRepository.findById(teamMemberId).get().getUserCredential()) {
-                logger.warn("Sale Point: user tries to add him self in sale point!!!");
-                return ResponseEntity.badRequest().body(
-                        new ObjectWithMessageResponse(
-                                new MessageResponse("you can't add your self into sale point"),
-                                null
-                        )
-                );
-            }
-        }
-
-
-        if (salePointId == null || teamMemberId == null) {
-            logger.warn("Sale point: Sale point id or team member id can't be null");
-            return ResponseEntity.badRequest().body(
-                    new ObjectWithMessageResponse(
-                            new MessageResponse("Sale point id or team member id can't be null"),
-                            null
-                    )
-            );
-        }
-        if (salePointRepository.findByIdAndDeleted(salePointId,false).isEmpty()) {
-            logger.warn("Sale point: Sale point with id: " + salePointId + " not found");
-            return ResponseEntity.badRequest().body(
-                    new ObjectWithMessageResponse(
-                            new MessageResponse("Sale point with id: " + salePointId + " not found"),
-                            null
-                    )
-            );
-        }
-        if (teamMemberRepository.findByIdAndDeleted(teamMemberId,false).isEmpty()) {
-            logger.warn("Sale point: Team member with id: " + teamMemberId + " not found");
-            return ResponseEntity.badRequest().body(
-                    new ObjectWithMessageResponse(
-                            new MessageResponse("Team member with id: " + teamMemberId + " not found"),
-                            null
-                    )
-            );
-        }
-        SalePoint salePoint = salePointRepository.findByIdAndDeleted(salePointId,false).orElseThrow(() -> new RuntimeException("Sale point not found"));
-        TeamMember teamMember = teamMemberRepository.findByIdAndDeleted(teamMemberId,false).orElseThrow(() -> new RuntimeException("Team member not found"));
-        if (salePoint.getTeamMembers().contains(teamMember)) {
-            logger.warn("Sale point: Sale point with id: " + salePointId + " already have team member with id: " + teamMemberId);
-            return ResponseEntity.badRequest().body(
-                    new ObjectWithMessageResponse(
-                            new MessageResponse("Sale point with id: " + salePointId + " already have team member with id: " + teamMemberId),
-                            null
-                    )
-            );
-        }
-        salePoint.getTeamMembers().add(teamMember);
-        var saveSalePoint = salePointRepository.save(salePoint);
-        teamMember.setSalePoint(salePoint);
-        teamMemberRepository.save(teamMember);
-        logger.info("Sale Point: salePoint with id: " + saveSalePoint.getId() +
-                " and name: " + saveSalePoint.getName() +
-                " have new team member with id: " + teamMember.getId() +
-                " and name: " + teamMember.getFirstname() + " " + teamMember.getLastname());
-        SalePointInfoResponse salePointInfoResponse = SalePointMapper.toSalePointInfoResponseDTO(saveSalePoint);
-        ObjectWithMessageResponse infoWithMessageResponse = new ObjectWithMessageResponse(
-                new MessageResponse("Sale point with id: " + salePointInfoResponse.getId() + " have new team member with id: " + teamMember.getId()),
-                salePointInfoResponse);
-        return ResponseEntity.ok().body(infoWithMessageResponse);
-    }
-
-    @Override
-    public ResponseEntity<?> removeTeamMember(Long salePointId, Long teamMemberId,String token) {
-
-        String tokenWithoutBearer = token.substring(7);
-        String username = jwtUtils.getUsernameFromJwtToken(tokenWithoutBearer);
-        if(username == null){
-            logger.warn("Sale point: Username not found");
-            return ResponseEntity.badRequest().body(
-                    new ObjectWithMessageResponse(
-                            new MessageResponse("Username not found"),
-                            null
-                    )
-            );
-        }
-        if (teamMemberRepository.findById(teamMemberId).isPresent() && userCredentialRepository.findByUsername(username).isPresent()) {
-            if (userCredentialRepository.findByUsername(username).get() == teamMemberRepository.findById(teamMemberId).get().getUserCredential()) {
-                logger.warn("Sale Point: user tries to remove him self from sale point!!!");
-                return ResponseEntity.badRequest().body(
-                        new ObjectWithMessageResponse(
-                                new MessageResponse("you can't remove your self into sale point"),
-                                null
-                        )
-                );
-            }
-        }
-
-        if (salePointId == null || teamMemberId == null) {
-            logger.warn("Sale point: Sale point id or team member id can't be null");
-            return ResponseEntity.badRequest().body(
-                    new ObjectWithMessageResponse(
-                            new MessageResponse("Sale point id or team member id can't be null"),
-                            null
-                    )
-            );
-        }
-        if (salePointRepository.findByIdAndDeleted(salePointId,false).isEmpty()) {
-            logger.warn("Sale point: Sale point with id: " + salePointId + " not found");
-            return ResponseEntity.badRequest().body(
-                    new ObjectWithMessageResponse(
-                            new MessageResponse("Sale point with id: " + salePointId + " not found"),
-                            null
-                    )
-            );
-        }
-        if (teamMemberRepository.findByIdAndDeleted(teamMemberId,false).isEmpty()) {
-            logger.warn("Sale point: Team member with id: " + teamMemberId + " not found");
-            return ResponseEntity.badRequest().body(
-                    new ObjectWithMessageResponse(
-                            new MessageResponse("Team member with id: " + teamMemberId + " not found"),
-                            null
-                    )
-            );
-        }
-        SalePoint salePoint = salePointRepository.findByIdAndDeleted(salePointId,false).orElseThrow(() -> new RuntimeException("Sale point not found"));
-        TeamMember teamMember = teamMemberRepository.findByIdAndDeleted(teamMemberId,false).orElseThrow(() -> new RuntimeException("Team member not found"));
-        if (!salePoint.getTeamMembers().contains(teamMember)) {
-            logger.warn("Sale point: Sale point with id: " + salePointId + " doesn't have team member with id: " + teamMemberId);
-            return ResponseEntity.badRequest().body(
-                    new ObjectWithMessageResponse(
-                            new MessageResponse("Sale point with id: " + salePointId + " doesn't have team member with id: " + teamMemberId),
-                            null
-                    )
-            );
-        }
-        salePoint.getTeamMembers().remove(teamMember);
-        var saveSalePoint = salePointRepository.save(salePoint);
-        teamMember.setSalePoint(null);
-        teamMemberRepository.save(teamMember);
-        logger.info("Sale Point: salePoint with id: " + saveSalePoint.getId() +
-                " and name: " + saveSalePoint.getName() +
-                " removed team member with id: " + teamMember.getId() +
-                " and name: " + teamMember.getFirstname() + " " + teamMember.getLastname());
-        SalePointInfoResponse salePointInfoResponse = SalePointMapper.toSalePointInfoResponseDTO(saveSalePoint);
-        ObjectWithMessageResponse infoWithMessageResponse = new ObjectWithMessageResponse(
-                new MessageResponse("Sale point with id: " + salePointInfoResponse.getId() + " has team member with id: " + teamMember.getId() + " removed"),
-                salePointInfoResponse
-        );
-        return ResponseEntity.ok().body(infoWithMessageResponse);
-    }
-
-    @Override
-    public ResponseEntity<?> addSession(Long salePointId, Long sessionId) {
-        if (salePointId == null || sessionId == null) {
-            logger.warn("Sale point: Sale point id or session id can't be null");
-            return ResponseEntity.badRequest().body(
-                    new ObjectWithMessageResponse(
-                            new MessageResponse("Sale point id or session id can't be null"),
-                            null
-                    )
-            );
-        }
-        if (salePointRepository.findByIdAndDeleted(salePointId,false).isEmpty()) {
-            logger.warn("Sale point: Sale point with id: " + salePointId + " not found");
-            return ResponseEntity.badRequest().body(
-                    new ObjectWithMessageResponse(
-                            new MessageResponse("Sale point with id: " + salePointId + " not found"),
-                            null
-                    )
-            );
-        }
-        if (sessionRepository.findByIdAndDeleted(sessionId,false).isEmpty()) {
-            logger.warn("Sale point: Session with id: " + sessionId + " not found");
-            return ResponseEntity.badRequest().body(
-                    new ObjectWithMessageResponse(
-                            new MessageResponse("Session with id: " + sessionId + " not found"),
-                            null
-                    )
-            );
-        }
-        SalePoint salePoint = salePointRepository.findByIdAndDeleted(salePointId,false).orElseThrow(() -> new RuntimeException("Sale point not found"));
-        Session session = sessionRepository.findByIdAndDeleted(sessionId,false).orElseThrow(() -> new RuntimeException("Session not found"));
-        if (salePoint.getSessions().contains(session)) {
-            logger.warn("Sale point: Sale point with id: " + salePointId + " already have session with id: " + sessionId);
-            return ResponseEntity.badRequest().body(
-                    new ObjectWithMessageResponse(
-                            new MessageResponse("Sale point with id: " + salePointId + " already have session with id: " + sessionId),
-                            null
-                    )
-            );
-        }
-        salePoint.getSessions().add(session);
-        var saveSalePoint = salePointRepository.save(salePoint);
-        session.setSalePoint(saveSalePoint);
-        sessionRepository.save(session);
-        logger.info("Sale Point: salePoint with id: " + saveSalePoint.getId() +
-                " and name: " + saveSalePoint.getName() +
-                " have new session with id: " + sessionId);
-        SalePointInfoResponse salePointInfoResponse = SalePointMapper.toSalePointInfoResponseDTO(saveSalePoint);
-        ObjectWithMessageResponse infoWithMessageResponse = new ObjectWithMessageResponse(
-                new MessageResponse("Sale point with id: " + salePointInfoResponse.getId() + " have new session with id: " + sessionId),
-                salePointInfoResponse
-        );
-        return ResponseEntity.ok().body(infoWithMessageResponse);
-    }
-
-    @Override
-    public ResponseEntity<?> removeSession(Long salePointId, Long sessionId) {
-        if (salePointId == null || sessionId == null) {
-            logger.warn("Sale point: Sale point id or session id can't be null");
-            return ResponseEntity.badRequest().body(
-                    new ObjectWithMessageResponse(
-                            new MessageResponse("Sale point id or session id can't be null"),
-                            null
-                    )
-            );
-        }
-        if (salePointRepository.findByIdAndDeleted(salePointId,false).isEmpty()) {
-            logger.warn("Sale point: Sale point with id: " + salePointId + " not found");
-            return ResponseEntity.badRequest().body(
-                    new ObjectWithMessageResponse(
-                            new MessageResponse("Sale point with id: " + salePointId + " not found"),
-                            null
-                    )
-            );
-        }
-        if (sessionRepository.findByIdAndDeleted(sessionId,false).isEmpty()) {
-            logger.warn("Sale point: Session with id: " + sessionId + " not found");
-            return ResponseEntity.badRequest().body(
-                    new ObjectWithMessageResponse(
-                            new MessageResponse("Session with id: " + sessionId + " not found"),
-                            null
-                    )
-            );
-        }
-        SalePoint salePoint = salePointRepository.findByIdAndDeleted(salePointId,false).orElseThrow(() -> new RuntimeException("Sale point not found"));
-        Session session = sessionRepository.findByIdAndDeleted(sessionId,false).orElseThrow(() -> new RuntimeException("Session not found"));
-        if (!salePoint.getSessions().contains(session)) {
-            logger.warn("Sale point: Sale point with id: " + salePointId + " doesn't have session with id: " + sessionId);
-            return ResponseEntity.badRequest().body(
-                    new ObjectWithMessageResponse(
-                            new MessageResponse("Sale point with id: " + salePointId + " doesn't have session with id: " + sessionId),
-                            null
-                    )
-            );
-        }
-        salePoint.getSessions().remove(session);
-        var saveSalePoint = salePointRepository.save(salePoint);
-        session.setSalePoint(null);
-        sessionRepository.save(session);
-        logger.info("Sale Point: salePoint with id: " + saveSalePoint.getId() +
-                " and name: " + saveSalePoint.getName() +
-                " removed session with id: " + sessionId);
-        SalePointInfoResponse salePointInfoResponse = SalePointMapper.toSalePointInfoResponseDTO(saveSalePoint);
-        ObjectWithMessageResponse infoWithMessageResponse = new ObjectWithMessageResponse(
-                new MessageResponse("Sale point with id: " + salePointInfoResponse.getId() + " has session with id: " + sessionId + " removed"),
-                salePointInfoResponse
-        );
-        return ResponseEntity.ok().body(infoWithMessageResponse);
-    }
-
-    @Override
     public ResponseEntity<?> getAllSalePoints() {
         List<SalePoint> salePoints = salePointRepository.findAllByDeleted(false);
         if (salePoints.isEmpty()) {
@@ -599,7 +305,7 @@ public class SalePointServiceImpl implements SalePointService {
                     )
             );
         }
-        List<SalePoint> salePoints = salePointRepository.findByAddressContainsAndDeleted(address,false);
+        List<SalePoint> salePoints = salePointRepository.findAllByAddressContainsAndDeleted(address,false);
 
         if (salePoints.isEmpty()) {
             logger.warn("Sale point: No sale points with address contains: " + address + " found");
@@ -630,7 +336,7 @@ public class SalePointServiceImpl implements SalePointService {
                     )
             );
         }
-        List<SalePoint> salePoints = salePointRepository.findByNameContainsAndDeleted(salePointName,false);
+        List<SalePoint> salePoints = salePointRepository.findAllByNameContainsAndDeleted(salePointName,false);
         if (salePoints.isEmpty()) {
             logger.warn("Sale point: No sale points with name contains: " + salePointName + " found");
             return ResponseEntity.badRequest().body(

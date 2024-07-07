@@ -14,7 +14,9 @@ public interface SalePointRepository extends JpaRepository<SalePoint,Long> {
     List<SalePoint>  findAllByDeleted(Boolean deleted);
     Optional<SalePoint> findByIdAndDeleted(Long id, Boolean deleted);
 
-    List<SalePoint> findByAddressContainsAndDeleted(String address, Boolean deleted);
+    List<SalePoint> findAllByAddressContainsAndDeleted(String address, Boolean deleted);
 
-    List<SalePoint> findByNameContainsAndDeleted(String salePointName,Boolean deleted);
+    List<SalePoint> findAllByNameContainsAndDeleted(String salePointName,Boolean deleted);
+
+    Boolean existsByIdAndDeleted(Long id, Boolean deleted);
 }

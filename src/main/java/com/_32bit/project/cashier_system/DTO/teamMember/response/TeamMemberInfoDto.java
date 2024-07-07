@@ -9,7 +9,8 @@ import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,7 +18,9 @@ public class TeamMemberInfoDto {
     private Long id;
     private String firstname;
     private String lastname;
-    private Date insertionDate;
-    private Time insertionTime;
+    private LocalDate insertionDate;
+    private LocalTime insertionTime;
     private List<String> roles;
+    private String salePointName;
+    private String salePointAddress;
 }

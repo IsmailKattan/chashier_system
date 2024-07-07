@@ -4,7 +4,6 @@ import com._32bit.project.cashier_system.DTO.salePoint.CreateSalePointRequest;
 import com._32bit.project.cashier_system.DTO.salePoint.SalePointInfoResponse;
 import com._32bit.project.cashier_system.DTO.salePoint.SessionOfSalePoint;
 import com._32bit.project.cashier_system.DTO.salePoint.TeamMemberOfSalePoint;
-import com._32bit.project.cashier_system.domains.Sale;
 import com._32bit.project.cashier_system.domains.SalePoint;
 import com._32bit.project.cashier_system.domains.Session;
 import com._32bit.project.cashier_system.domains.TeamMember;
@@ -51,8 +50,8 @@ public class SalePointMapper {
                         TeamMemberOfSalePoint
                                 .builder()
                                 .id(teamMember.getId())
-                                .name(teamMember.getFirstname() + " " + teamMember.getLastname())
-                                .username(teamMember.getUserCredential().getUsername())
+                                .name(teamMember.getUsername())
+                                .username(teamMember.getUsername())
                                 .build()
                 );
             });
@@ -64,7 +63,7 @@ public class SalePointMapper {
                 .id(salePoint.getId())
                 .name(salePoint.getName())
                 .address(salePoint.getAddress())
-                .createdBy(salePoint.getCreatedBy().getUserCredential().getUsername())
+                .createdBy(salePoint.getCreatedBy().getUsername())
                 .createdAtDate(salePoint.getCreatingDate())
                 .createdAtTime(salePoint.getCreatingTime())
                 .createdBy(salePoint.getCreatedBy().getFirstname()+" "+salePoint.getCreatedBy().getLastname())
@@ -124,7 +123,7 @@ public class SalePointMapper {
                             .builder()
                             .id(teamMember.getId())
                             .name(teamMember.getFirstname() + " " + teamMember.getLastname())
-                            .username(teamMember.getUserCredential().getUsername())
+                            .username(teamMember.getUsername())
                             .build()
             );
         });

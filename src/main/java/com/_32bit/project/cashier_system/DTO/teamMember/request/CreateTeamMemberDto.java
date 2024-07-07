@@ -6,7 +6,8 @@ import lombok.*;
 import java.util.List;
 
 
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,5 +21,6 @@ public class CreateTeamMemberDto {
     private String phoneNumber;
     private String password;
     private List<String> roles;
+    private Long salePointId;
 
 }

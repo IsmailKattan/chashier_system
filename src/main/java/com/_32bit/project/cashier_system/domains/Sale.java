@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,18 +25,27 @@ public class Sale {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false)
-    private Long Id;
+    private Long id;
 
     @Temporal(TemporalType.DATE)
-    private Date saleDate;
+    private LocalDate saleDate;
 
     @Temporal(TemporalType.TIME)
-    private Time saleTime;
+    private LocalTime saleTime;
 
     @Enumerated(EnumType.STRING)
     private PaymentType paymentType;
 
     private Double total;
+
+    @Column(name = "amount_cash_paid")
+    private Double amountCashPaid;
+
+    @Column(name = "amount_card_paid")
+    private Double amountCardPaid;
+
+    @Column(name = "amount_paid")
+    private Double amountPaid;
 
     @Column(name = "received_money")
     private Double receivedMoney;
@@ -51,11 +62,11 @@ public class Sale {
     @Column(name = "discounted_total")
     private Double discountedTotal;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "soldBy")
     private TeamMember soldBy;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "session")
     private Session session;
 

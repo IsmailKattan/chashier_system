@@ -2,7 +2,6 @@ package com._32bit.project.cashier_system.domains;
 
 import com._32bit.project.cashier_system.domains.enums.ERole;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 
@@ -26,4 +25,5 @@ public class Role {
     private ERole name;
 
     private Boolean deleted = false;
+
 }

@@ -1,13 +1,13 @@
 package com._32bit.project.cashier_system.DTO.salePoint;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 @Builder
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class CreateSalePointRequest {
     @JsonIgnore
     private Long id;

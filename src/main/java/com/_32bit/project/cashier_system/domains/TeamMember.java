@@ -8,6 +8,8 @@ import jakarta.validation.constraints.Size;
 
 import lombok.*;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,12 +34,29 @@ import java.util.stream.Collectors;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TeamMember {
+public class TeamMember implements UserDetails{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id" ,updatable = false)
     private Long id;
+
+    @Column(unique = true)
+    private String username;
+
+    @Column(unique = true)
+    private String email;
+
+    @Column(unique = true,name = "phone_number")
+    private String phoneNumber;
+
+    private String password;
+
+    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @JoinTable(name="team_member_roles",
+            joinColumns = @JoinColumn(name = "team_member_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private List<Role> roles = new ArrayList<>();
 
     @NotBlank
     @Size(max = 40)
@@ -50,17 +69,13 @@ public class TeamMember {
 
     @Column(name = "insertion_date")
     @Temporal(TemporalType.DATE)
-    private Date insertionDate;
+    private LocalDate insertionDate;
 
     @Column(name = "insertion_Time")
     @Temporal(TemporalType.TIME)
-    private Time insertionTime;
+    private LocalTime insertionTime;
 
     private Boolean deleted = false;
-
-    @OneToOne
-    @JoinColumn(name = "user_credential_id")
-    private UserCredential userCredential;
 
     @OneToMany(mappedBy = "insertedBy",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Product> products = new ArrayList<>();
@@ -71,12 +86,42 @@ public class TeamMember {
     @OneToMany(mappedBy = "openedBy", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Session> sessions = new ArrayList<>();
 
+    @OneToMany(mappedBy = "closedBy", cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<Session> closedSessions = new ArrayList<>();
+
     @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<SalePoint> salePoints = new ArrayList<>();
 
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "salePoint")
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "sale_point_id", nullable = true)
+    @NotFound(action = NotFoundAction.IGNORE)
     private SalePoint salePoint;
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getName().name())).collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
 
