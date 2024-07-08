@@ -1,5 +1,6 @@
 package com._32bit.project.cashier_system.domains;
 
+import com._32bit.project.cashier_system.domains.enums.Category;
 import com._32bit.project.cashier_system.domains.enums.Unit;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -32,6 +33,9 @@ public class Product {
     @Size(max = 60)
     private String brand;
 
+    @Enumerated(EnumType.STRING)
+    private Category category;
+
     private Double quantity;
 
     @Enumerated(EnumType.STRING)
@@ -61,6 +65,5 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SaleItem> saleItems = new ArrayList<>();
-
 
 }

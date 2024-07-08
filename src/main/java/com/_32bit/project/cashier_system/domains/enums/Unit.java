@@ -7,5 +7,15 @@ public enum Unit {
     koli,
     paket,
     deste,
-    duzine
+    duzine,
+    other;
+
+    public static boolean contains(String value) {
+        for (Unit unit : Unit.values()) {
+            if (unit.name().equalsIgnoreCase(value)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
