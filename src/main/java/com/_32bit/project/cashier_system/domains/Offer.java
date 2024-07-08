@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -33,14 +34,14 @@ public class Offer {
 
     @Temporal(TemporalType.DATE)
     @Column(name = "insertion_date", nullable = false)
-    private Date insertionDate;
+    private LocalDate insertionDate;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "start_date",nullable = false)
-    private Date startDate;
+    private LocalDate startDate;
     @Temporal(TemporalType.DATE)
     @Column(name = "end_date",nullable = false)
-    private Date endDate;
+    private LocalDate endDate;
 
     @Column(name = "get_count")
     private Integer getCount;
