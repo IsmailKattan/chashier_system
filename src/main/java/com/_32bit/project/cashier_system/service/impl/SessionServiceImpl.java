@@ -212,6 +212,16 @@ public class SessionServiceImpl implements SessionService {
         SalePoint salePoint = salePointOptional.get();
         TeamMember teamMember = teamMemberOptional.get();
 
+        if (salePoint != teamMember.getSalePoint() && teamMember.getSalePoint() != null) {
+            logger.error("Session: User with username: " + username + " can't open session in sale point with id: " + openSessionRequest.getSalePointId());
+            return ResponseEntity.badRequest().body(
+                    new ObjectWithMessageResponse(
+                            new MessageResponse("User with username: " + username + " can't open session in sale point with id: " + openSessionRequest.getSalePointId()),
+                            null
+                    )
+            );
+        }
+
         if (haveOpenSession(salePoint)) {
             logger.error("Session: Sale point with id: " + openSessionRequest.getSalePointId() + " already have open session");
             return ResponseEntity.badRequest().body(
@@ -277,6 +287,18 @@ public class SessionServiceImpl implements SessionService {
         // check if sale point have open session
         SalePoint salePoint = salePointOptional.get();
         List<Session> sessionList = salePoint.getSessions();
+        TeamMember teamMember = teamMemberOptional.get();
+
+        if (salePoint != teamMember.getSalePoint() && teamMember.getSalePoint() != null) {
+            logger.error("Session: User with username: " + username + " can't close session in sale point with id: " + closeSessionRequest.getSalePointId());
+            return ResponseEntity.badRequest().body(
+                    new ObjectWithMessageResponse(
+                            new MessageResponse("User with username: " + username + " can't close session in sale point with id: " + closeSessionRequest.getSalePointId()),
+                            null
+                    )
+            );
+        }
+
         if (!haveOpenSession(salePoint)) {
             logger.error("Session: Sale point with id: " + closeSessionRequest.getSalePointId() + " have no open session");
             return ResponseEntity.badRequest().body(
@@ -286,7 +308,7 @@ public class SessionServiceImpl implements SessionService {
                     )
             );
         }
-        TeamMember teamMember = teamMemberOptional.get();
+
         Session session = sessionList.stream().filter(s -> !s.getClosed()).findFirst().get();
         logger.info("Session: Session found successfully");
         session.setClosingDate(LocalDate.now());

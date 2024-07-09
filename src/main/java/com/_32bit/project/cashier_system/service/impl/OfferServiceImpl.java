@@ -9,13 +9,17 @@ import com._32bit.project.cashier_system.domains.Offer;
 import com._32bit.project.cashier_system.mapper.OfferMapper;
 import com._32bit.project.cashier_system.service.OfferService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
+@Service
 public class OfferServiceImpl implements OfferService {
 
     private final Logger logger = Logger.getLogger(OfferServiceImpl.class.getName());
@@ -31,7 +35,7 @@ public class OfferServiceImpl implements OfferService {
     public ResponseEntity<?> getOfferListByDeleted(Boolean deleted) {
         if (deleted == null) {
             logger.warning("Deleted parameter is required");
-            return ResponseEntity.badRequest().body("Deleted parameter is required");
+            return ResponseEntity.badRequest().body(new MessageResponse("Deleted parameter is required"));
         }
         List<Offer> offerList = offerRepository.findAllByDeleted(deleted);
         if (offerList.isEmpty()) {
@@ -51,11 +55,11 @@ public class OfferServiceImpl implements OfferService {
     public ResponseEntity<?> getOfferByIdAndDeleted(Long id, Boolean deleted) {
         if(deleted == null) {
             logger.warning("Deleted parameter is required");
-            return ResponseEntity.badRequest().body("Deleted parameter is required");
+            return ResponseEntity.badRequest().body(new MessageResponse("Deleted parameter is required"));
         }
         if(id == null) {
             logger.warning("Id parameter is required");
-            return ResponseEntity.badRequest().body("Id parameter is required");
+            return ResponseEntity.badRequest().body(new MessageResponse("Id parameter is required"));
         }
         Optional<Offer> offerOptional = offerRepository.findByIdAndDeleted(id,deleted);
         if(offerOptional.isEmpty()) {
@@ -78,15 +82,31 @@ public class OfferServiceImpl implements OfferService {
     public ResponseEntity<?> createOffer(CreateOfferRequest request) {
         if(request == null) {
             logger.warning("Request body is required");
-            return ResponseEntity.badRequest().body("Request body is required");
+            return ResponseEntity.badRequest().body(new MessageResponse("Request body is required"));
         }
+
+        if(haveNullFields(request)) {
+            logger.warning("Request body has null fields");
+            return ResponseEntity.badRequest().body(new MessageResponse("Request body has null fields"));
+        }
+
+        if (request.getStartDate().isBefore(LocalDate.now())) {
+            logger.warning("Start date cannot be before the current date");
+            return ResponseEntity.badRequest().body(new MessageResponse("Start date cannot be before the current date"));
+        }
+
+        if (request.getEndDate().isBefore(request.getStartDate())) {
+            logger.warning("End date cannot be before start date");
+            return ResponseEntity.badRequest().body(new MessageResponse("End date cannot be before start date"));
+        }
+
         Offer offer = null;
         try {
             offer = OfferMapper.createOfferFromRequestToDomain(request);
             offerRepository.save(offer);
         } catch (Exception e) {
             logger.warning("Error while creating offer");
-            return ResponseEntity.badRequest().body("Error while creating offer");
+            return ResponseEntity.badRequest().body(new MessageResponse("Error while creating offer"));
         }
         return ResponseEntity.ok(
                 new ObjectWithMessageResponse(
@@ -101,16 +121,25 @@ public class OfferServiceImpl implements OfferService {
     public ResponseEntity<?> updateOffer(Long id, CreateOfferRequest request) {
         if (id == null) {
             logger.warning("Id parameter is required");
-            return ResponseEntity.badRequest().body("Id parameter is required");
+            return ResponseEntity.badRequest().body(new MessageResponse("Id parameter is required"));
         }
         if (request == null) {
             logger.warning("Request body is required");
-            return ResponseEntity.badRequest().body("Request body is required");
+            return ResponseEntity.badRequest().body(new MessageResponse("Request body is required"));
         }
         if (haveNullFields(request)) {
             logger.warning("Request body has null fields");
-            return ResponseEntity.badRequest().body("Request body has null fields");
+            return ResponseEntity.badRequest().body(new MessageResponse("Request body has null fields"));
         }
+        if (request.getStartDate().isBefore(LocalDate.now())) {
+            logger.warning("Start date cannot be before the current date");
+            return ResponseEntity.badRequest().body(new MessageResponse("Start date cannot be before the current date"));
+        }
+        if (request.getEndDate().isBefore(request.getStartDate())) {
+            logger.warning("End date cannot be before start date");
+            return ResponseEntity.badRequest().body(new MessageResponse("End date cannot be before start date"));
+        }
+
         Optional<Offer> offerOptional = offerRepository.findById(id);
         if (offerOptional.isEmpty()) {
             logger.warning("Offer not found");
@@ -128,7 +157,7 @@ public class OfferServiceImpl implements OfferService {
             offerRepository.save(offer);
         } catch (Exception e) {
             logger.warning("Error while updating offer");
-            return ResponseEntity.badRequest().body("Error while updating offer");
+            return ResponseEntity.badRequest().body(new MessageResponse("Error while updating offer"));
         }
 
         return ResponseEntity.ok(
@@ -152,7 +181,7 @@ public class OfferServiceImpl implements OfferService {
     public ResponseEntity<?> deleteOffer(Long id) {
         if (id == null) {
             logger.warning("Id parameter is required");
-            return ResponseEntity.badRequest().body("Id parameter is required");
+            return ResponseEntity.badRequest().body(new MessageResponse("Id parameter is required"));
         }
         Optional<Offer> offerOptional = offerRepository.findByIdAndDeleted(id, false);
         if (offerOptional.isEmpty()) {
@@ -165,7 +194,7 @@ public class OfferServiceImpl implements OfferService {
             offerRepository.save(offer);
         } catch (Exception e) {
             logger.warning("Error while deleting offer");
-            return ResponseEntity.badRequest().body("Error while deleting offer");
+            return ResponseEntity.badRequest().body(new MessageResponse("Error while deleting offer"));
         }
         return ResponseEntity.ok(
                 new ObjectWithMessageResponse(
@@ -179,7 +208,7 @@ public class OfferServiceImpl implements OfferService {
     public ResponseEntity<?> restoreOffer(Long id) {
         if (id == null) {
             logger.warning("Id parameter is required");
-            return ResponseEntity.badRequest().body("Id parameter is required");
+            return ResponseEntity.badRequest().body(new MessageResponse("Id parameter is required"));
         }
         Optional<Offer> offerOptional = offerRepository.findByIdAndDeleted(id, true);
         if (offerOptional.isEmpty()) {
@@ -192,7 +221,7 @@ public class OfferServiceImpl implements OfferService {
             offerRepository.save(offer);
         } catch (Exception e) {
             logger.warning("Error while restoring offer");
-            return ResponseEntity.badRequest().body("Error while restoring offer");
+            return ResponseEntity.badRequest().body(new MessageResponse("Error while restoring offer"));
         }
         return ResponseEntity.ok(
                 new ObjectWithMessageResponse(
@@ -206,11 +235,11 @@ public class OfferServiceImpl implements OfferService {
     public ResponseEntity<?> getOffersByNameContainsAndDeleted(String name, Boolean deleted) {
         if (name == null) {
             logger.warning("Name parameter is required");
-            return ResponseEntity.badRequest().body("Name parameter is required");
+            return ResponseEntity.badRequest().body(new MessageResponse("Name parameter is required"));
         }
         if (deleted == null) {
             logger.warning("Deleted parameter is required");
-            return ResponseEntity.badRequest().body("Deleted parameter is required");
+            return ResponseEntity.badRequest().body(new MessageResponse("Deleted parameter is required"));
         }
         List<Offer> offerList = offerRepository.findByNameContainsAndDeleted(name, deleted);
         if (offerList.isEmpty()) {
@@ -230,13 +259,13 @@ public class OfferServiceImpl implements OfferService {
     public ResponseEntity<?> getOffersByDescriptionContainsAndDeleted(String description, Boolean deleted) {
         if (description == null) {
             logger.warning("Description parameter is required");
-            return ResponseEntity.badRequest().body("Description parameter is required");
+            return ResponseEntity.badRequest().body(new MessageResponse("Description parameter is required"));
         }
         if (deleted == null) {
             logger.warning("Deleted parameter is required");
-            return ResponseEntity.badRequest().body("Deleted parameter is required");
+            return ResponseEntity.badRequest().body(new MessageResponse("Deleted parameter is required"));
         }
-        List<Offer> offerList = offerRepository.findByDescriptionContinsAndDeleted(description, deleted);
+        List<Offer> offerList = offerRepository.findByDescriptionContainsAndDeleted(description, deleted);
         if (offerList.isEmpty()) {
             logger.warning("No offers found");
             return ResponseEntity.notFound().build();
@@ -251,14 +280,14 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
-    public ResponseEntity<?> getOffersByStartingDateBetweenAndDeleted(String startDate, String endDate, Boolean deleted) {
+    public ResponseEntity<?> getOffersByStartingDateBetweenAndDeleted(LocalDate startDate, LocalDate endDate, Boolean deleted) {
         if (startDate == null || endDate == null) {
             logger.warning("Start date and end date parameters are required");
-            return ResponseEntity.badRequest().body("Start date and end date parameters are required");
+            return ResponseEntity.badRequest().body(new MessageResponse("Start date and end date parameters are required"));
         }
         if (deleted == null) {
             logger.warning("Deleted parameter is required");
-            return ResponseEntity.badRequest().body("Deleted parameter is required");
+            return ResponseEntity.badRequest().body(new MessageResponse("Deleted parameter is required"));
         }
         List<Offer> offerList = offerRepository.findByStartDateBetweenAndDeleted(startDate, endDate, deleted);
         if (offerList.isEmpty()) {

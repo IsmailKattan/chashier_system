@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface ProductService {
     ResponseEntity<?> getAllProducts();
+    ResponseEntity<?> getProductsByDeleted(Boolean deleted);
 
     ResponseEntity<?> getProductByIdAndDeleted(Long id, Boolean deleted);
 
@@ -35,6 +36,8 @@ public interface ProductService {
     ResponseEntity<?> removeOffer(Long productId);
 
     ResponseEntity<?> UpdateQuantities(List<UpdateQuantityRequest> requests);
+
+    ResponseEntity<?> UpdateAddQuantities(List<UpdateQuantityRequest> requests);
 
     ResponseEntity<?> createProducts(List<CreateProductRequest> requests,String token);
 

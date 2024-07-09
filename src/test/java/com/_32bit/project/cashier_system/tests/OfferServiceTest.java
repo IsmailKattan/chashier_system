@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +31,10 @@ public class OfferServiceTest {
     private OfferServiceImpl offerServiceImpl;
 
     private Offer offer;
+
+    private LocalDate startDate;
+    private LocalDate endDate;
+
     private CreateOfferRequest createOfferRequest;
 
     @BeforeEach
@@ -52,6 +57,9 @@ public class OfferServiceTest {
         createOfferRequest.setEndDate(LocalDate.parse("2022-12-31"));
         createOfferRequest.setGetCount(1);
         createOfferRequest.setPayFor(1);
+
+        startDate = LocalDate.of(2022, 1, 1);
+        endDate = LocalDate.of(2022, 12, 31);
     }
 
     @Test
@@ -141,24 +149,22 @@ public class OfferServiceTest {
         List<Offer> offers = new ArrayList<>();
         offers.add(offer);
 
-        when(offerRepository.findByDescriptionContinsAndDeleted("Description", false)).thenReturn(offers);
+        when(offerRepository.findByDescriptionContainsAndDeleted("Description", false)).thenReturn(offers);
 
         ResponseEntity<?> response = offerServiceImpl.getOffersByDescriptionContainsAndDeleted("Description", false);
 
         assertEquals(200, response.getStatusCodeValue());
-        verify(offerRepository, times(1)).findByDescriptionContinsAndDeleted("Description", false);
+        verify(offerRepository, times(1)).findByDescriptionContainsAndDeleted("Description", false);
     }
 
     @Test
     public void testGetOffersByStartingDateBetweenAndDeleted() {
-        List<Offer> offers = new ArrayList<>();
-        offers.add(offer);
+        when(offerRepository.findByStartDateBetweenAndDeleted(startDate, endDate, false))
+                .thenReturn(Arrays.asList(offer));
 
-        when(offerRepository.findByStartDateBetweenAndDeleted("2022-01-01", "2022-12-31", false)).thenReturn(offers);
-
-        ResponseEntity<?> response = offerServiceImpl.getOffersByStartingDateBetweenAndDeleted("2022-01-01", "2022-12-31", false);
+        ResponseEntity<?> response = offerServiceImpl.getOffersByStartingDateBetweenAndDeleted(startDate, endDate, false);
 
         assertEquals(200, response.getStatusCodeValue());
-        verify(offerRepository, times(1)).findByStartDateBetweenAndDeleted("2022-01-01", "2022-12-31", false);
+        verify(offerRepository, times(1)).findByStartDateBetweenAndDeleted(startDate, endDate, false);
     }
 }

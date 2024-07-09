@@ -1,6 +1,7 @@
 package com._32bit.project.cashier_system.DAO;
 
 import com._32bit.project.cashier_system.domains.Product;
+import com._32bit.project.cashier_system.domains.enums.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,5 +18,5 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
 
     List<Product> findByBrandContainsAndDeleted(String brand, Boolean deleted);
 
-    List<Product> findByCategoryAndDeleted(String category, Boolean deleted);
+    List<Product> findByCategoryAndDeleted(Category category, Boolean deleted);
 }
