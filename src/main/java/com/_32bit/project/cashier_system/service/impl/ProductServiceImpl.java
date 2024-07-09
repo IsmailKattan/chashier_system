@@ -735,4 +735,36 @@ public class ProductServiceImpl implements ProductService {
             return productOptional.get().getPrice();
         }
     }
+
+    @Override
+    public Product getProductById(Long id) {
+        if (id == null) {
+            logger.error("Id is null");
+            return null;
+        }
+        Optional<Product> productOptional = productRepository.findByIdAndDeleted(id,false);
+        if (productOptional.isEmpty()) {
+            logger.error("Product not found");
+            return null;
+        }
+        return productOptional.get();
+    }
+
+    @Override
+    public Offer getOfferDetails(Long id) {
+        if (id == null) {
+            logger.error("Id is null");
+            return null;
+        }
+        Optional<Product> productOptional = productRepository.findByIdAndDeleted(id,false);
+        if (productOptional.isEmpty()) {
+            logger.error("Product not found");
+            return null;
+        }
+        if (productOptional.get().getOffer() == null) {
+            logger.error("Product does not have an offer");
+            return null;
+        }
+        return productOptional.get().getOffer();
+    }
 }

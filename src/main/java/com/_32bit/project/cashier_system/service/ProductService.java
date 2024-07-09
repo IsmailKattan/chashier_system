@@ -3,6 +3,8 @@ package com._32bit.project.cashier_system.service;
 import com._32bit.project.cashier_system.DTO.product.CreateProductRequest;
 import com._32bit.project.cashier_system.DTO.product.UpdatePriceRequest;
 import com._32bit.project.cashier_system.DTO.product.UpdateQuantityRequest;
+import com._32bit.project.cashier_system.domains.Offer;
+import com._32bit.project.cashier_system.domains.Product;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -45,4 +47,7 @@ public interface ProductService {
 
     Double getPriceById(Long id);
 
+    Product getProductById(Long id);
+
+    Offer getOfferDetails(Long id);
 }

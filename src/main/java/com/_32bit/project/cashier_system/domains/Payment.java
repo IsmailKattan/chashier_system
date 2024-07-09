@@ -1,38 +1,29 @@
 package com._32bit.project.cashier_system.domains;
 
+
+import com._32bit.project.cashier_system.domains.enums.PaymentMethod;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "sale_item")
 @Getter
 @Setter
 @Builder
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class SaleItem {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(updatable = false)
+public class Payment {
+
     private Long id;
 
-    @Column(nullable = false)
-    private Double quantity;
+    private Double amount;
 
-    private Double total;
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod;
 
     private Boolean deleted = false;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "sale")
     private Sale sale;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "product")
-    private Product product;
-
-
-
-
 }

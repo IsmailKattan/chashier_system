@@ -15,13 +15,11 @@ import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.User;
+
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -406,5 +404,30 @@ public class SessionServiceImpl implements SessionService {
                         SessionMapper.toSessionInfoResponseDTO(session)
                 )
         );
+    }
+
+    @Override
+    public Session getOpenSessionOfSalePoint(Long id) {
+        if (id == null) {
+            logger.error("Session: Sale point id is null");
+            return null;
+        }
+        if (salePointRepository.findByIdAndDeleted(id, false).isEmpty()) {
+            logger.error("Session: Sale point with id: " + id + " not found");
+            return null;
+        }
+
+        if (salePointRepository.findByIdAndDeleted(id, false).get().getSessions().isEmpty()) {
+            logger.error("Session: Sale point with id: " + id + " has no sessions");
+            return null;
+        }
+
+        if (!haveOpenSession(salePointRepository.findByIdAndDeleted(id, false).get())) {
+            logger.error("Session: Sale point with id: " + id + " have no open session");
+            return null;
+        }
+
+        var salePoint = salePointRepository.findByIdAndDeleted(id, false).get();
+        return salePoint.getSessions().stream().filter(s -> !s.getClosed()).findFirst().get();
     }
 }

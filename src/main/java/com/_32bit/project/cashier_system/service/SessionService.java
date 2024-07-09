@@ -1,6 +1,7 @@
 package com._32bit.project.cashier_system.service;
 
 import com._32bit.project.cashier_system.DTO.session.CashInfoDto;
+import com._32bit.project.cashier_system.domains.Session;
 import org.springframework.http.ResponseEntity;
 
 public interface SessionService {
@@ -23,4 +24,5 @@ public interface SessionService {
 
     ResponseEntity<?> getSalePointOpenSession(Long id);
 
+    Session getOpenSessionOfSalePoint(Long id);
 }
