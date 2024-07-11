@@ -1,6 +1,7 @@
 package com._32bit.project.cashier_system.service;
 
 import com._32bit.project.cashier_system.DTO.offer.CreateOfferRequest;
+import com._32bit.project.cashier_system.domains.Offer;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
@@ -15,4 +16,6 @@ public interface OfferService {
     ResponseEntity<?> getOffersByNameContainsAndDeleted(String name, Boolean deleted);
     ResponseEntity<?> getOffersByDescriptionContainsAndDeleted(String description, Boolean deleted);
     ResponseEntity<?> getOffersByStartingDateBetweenAndDeleted(LocalDate startDate, LocalDate endDate, Boolean deleted);
+
+    Offer getOfferDetailsById(Long id);
 }

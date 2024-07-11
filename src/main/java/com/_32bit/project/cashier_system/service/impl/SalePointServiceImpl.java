@@ -35,7 +35,6 @@ public class SalePointServiceImpl implements SalePointService {
 
     private final TeamMemberRepository teamMemberRepository;
 
-    private final SessionRepository sessionRepository;
 
     private final JwtUtils jwtUtils;
 

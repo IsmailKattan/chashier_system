@@ -23,11 +23,6 @@ public class SessionInfoResponse {
     private LocalTime openingTime;
     private LocalDate closingDate;
     private LocalTime closingTime;
-    private double openingCash;
-    private double closingCash;
-    private double salesCash;
-    private double openingClosingBalance;
-    private double expectedRealCashBalance;
     private boolean closed;
     private String openedBy;
     private String closedBy;

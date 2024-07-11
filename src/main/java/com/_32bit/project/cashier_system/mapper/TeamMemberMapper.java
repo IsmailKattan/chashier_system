@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -31,7 +32,7 @@ public class TeamMemberMapper {
                 .email(createTeamMemberDto.getEmail())
                 .password(password)
                 .insertionDate(LocalDate.now())
-                .insertionTime(LocalTime.now())
+                .insertionTime(LocalTime.now().truncatedTo(ChronoUnit.SECONDS))
                 .salePoint(salePoint)
                 .deleted(false)
                 .build();

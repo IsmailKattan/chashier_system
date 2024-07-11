@@ -11,6 +11,7 @@ import com._32bit.project.cashier_system.DTO.product.UpdatePriceRequest;
 import com._32bit.project.cashier_system.DTO.product.UpdateQuantityRequest;
 import com._32bit.project.cashier_system.domains.Offer;
 import com._32bit.project.cashier_system.domains.Product;
+import com._32bit.project.cashier_system.domains.SaleItem;
 import com._32bit.project.cashier_system.domains.TeamMember;
 import com._32bit.project.cashier_system.domains.enums.Category;
 import com._32bit.project.cashier_system.domains.enums.Unit;
@@ -766,5 +767,72 @@ public class ProductServiceImpl implements ProductService {
             return null;
         }
         return productOptional.get().getOffer();
+    }
+
+    @Override
+    public boolean productHaveOffer(Long productId) {
+        if (productId == null) {
+            logger.error("ProductId is null");
+            return false;
+        }
+        Optional<Product> productOptional = productRepository.findByIdAndDeleted(productId,false);
+        if (productOptional.isEmpty()) {
+            logger.error("Product not found");
+            return false;
+        }
+        return productOptional.get().getOffer() != null;
+    }
+
+    @Override
+    public void decreaseQuantity(Long productId, Double quantity) {
+        if (productId == null || quantity == null) {
+            logger.error("ProductId or quantity is null");
+            return;
+        }
+        Optional<Product> productOptional = productRepository.findByIdAndDeleted(productId,false);
+        if (productOptional.isEmpty()) {
+            logger.error("Product to decrease not found");
+            return;
+        }
+        Product product = productOptional.get();
+        product.setQuantity(product.getQuantity() - quantity);
+        productRepository.save(product);
+
+    }
+
+    @Override
+    public void increaseQuantities(List<SaleItem> saleItems) {
+        if (saleItems == null) {
+            logger.error("SaleItems is null");
+            return;
+        }
+        for (SaleItem saleItem : saleItems) {
+            Optional<Product> productOptional = productRepository.findByIdAndDeleted(saleItem.getProduct().getId(),false);
+            if (productOptional.isEmpty()) {
+                logger.error("Product to increase not found");
+                return;
+            }
+            Product product = productOptional.get();
+            product.setQuantity(product.getQuantity() + saleItem.getQuantity());
+            productRepository.save(product);
+        }
+    }
+
+    @Override
+    public void decreaseQuantities(List<SaleItem> saleItems) {
+        if (saleItems == null) {
+            logger.error("SaleItems is null");
+            return;
+        }
+        for (SaleItem saleItem : saleItems) {
+            Optional<Product> productOptional = productRepository.findByIdAndDeleted(saleItem.getProduct().getId(),false);
+            if (productOptional.isEmpty()) {
+                logger.error("Product to decrease not found");
+                return;
+            }
+            Product product = productOptional.get();
+            product.setQuantity(product.getQuantity() - saleItem.getQuantity());
+            productRepository.save(product);
+        }
     }
 }

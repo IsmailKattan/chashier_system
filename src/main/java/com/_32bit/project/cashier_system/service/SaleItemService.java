@@ -10,7 +10,5 @@ public interface SaleItemService {
 
     List<SaleItem> getSaleItemsFromItemOfSaleDto(List<ItemOfSaleDto> items, Sale sale);
 
-    Boolean productHaveOffer(Long productId);
-
     SaleItem ApplyOffer(SaleItem saleItem);
 }

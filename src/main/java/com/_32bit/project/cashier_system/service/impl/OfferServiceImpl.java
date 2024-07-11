@@ -302,4 +302,18 @@ public class OfferServiceImpl implements OfferService {
                 )
         );
     }
+
+    @Override
+    public Offer getOfferDetailsById(Long id) {
+        if (id == null) {
+            logger.warning("Id parameter is required");
+            return null;
+        }
+        Optional<Offer> offerOptional = offerRepository.findById(id);
+        if (offerOptional.isEmpty()) {
+            logger.warning("Offer not found");
+            return null;
+        }
+        return offerOptional.get();
+    }
 }

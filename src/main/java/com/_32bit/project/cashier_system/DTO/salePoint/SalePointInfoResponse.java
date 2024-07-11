@@ -18,8 +18,8 @@ public class SalePointInfoResponse {
 
     private Long id;
     private String name;
-    private Date createdAtDate;
-    private Time createdAtTime;
+    private LocalDate createdAtDate;
+    private LocalTime createdAtTime;
     private String address;
     private String createdBy;
 

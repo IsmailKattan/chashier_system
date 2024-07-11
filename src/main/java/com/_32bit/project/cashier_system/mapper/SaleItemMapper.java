@@ -1,6 +1,7 @@
 package com._32bit.project.cashier_system.mapper;
 
 import com._32bit.project.cashier_system.DTO.saleItem.ItemOfSaleDto;
+import com._32bit.project.cashier_system.DTO.saleItem.SaleItemInfoResponseDto;
 import com._32bit.project.cashier_system.domains.SaleItem;
 
 import java.util.ArrayList;
@@ -19,16 +20,27 @@ public class SaleItemMapper {
 
     private static ItemOfSaleDto toItemOfSaleDto(SaleItem saleItem) {
         return ItemOfSaleDto.builder()
-                .ProductId(saleItem.getProduct().getId())
+                .productId(saleItem.getProduct().getId())
                 .quantity(saleItem.getQuantity())
                 .build();
     }
 
+    public static List<SaleItemInfoResponseDto> toSaleItemInfoResponseDtoList(List<SaleItem> saleItems) {
+        List<SaleItemInfoResponseDto> saleItemInfoResponseDtos = new ArrayList<>();
+        for (SaleItem saleItem : saleItems) {
+            saleItemInfoResponseDtos.add(
+                    SaleItemInfoResponseDto.builder()
+                            .id(saleItem.getId())
+                            .price(saleItem.getProduct().getPrice())
+                            .discountedPrice(saleItem.getProduct().getDiscountedPrice())
+                            .quantity(saleItem.getQuantity())
+                            .forFree(saleItem.getQuantity() - saleItem.getPaidFor())
+                            .total(saleItem.getTotal())
+                            .build()
+            );
+        }
 
-    public static SaleItem toSaleItemDomain(ItemOfSaleDto item) {
-        return SaleItem.builder()
-                .quantity(item.getQuantity())
-                .build();
+        return saleItemInfoResponseDtos;
+
     }
-
 }

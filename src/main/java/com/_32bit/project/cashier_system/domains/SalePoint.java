@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 
@@ -25,11 +27,11 @@ public class SalePoint {
 
     @Column(name = "creating_date")
     @Temporal(TemporalType.DATE)
-    private Date creatingDate;
+    private LocalDate creatingDate;
 
     @Column(name = "creating_time")
     @Temporal(TemporalType.TIME)
-    private Time creatingTime;
+    private LocalTime creatingTime;
 
     private String address;
 
@@ -45,4 +47,6 @@ public class SalePoint {
     @OneToMany(mappedBy = "salePoint", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<TeamMember> teamMembers;
 
+    @OneToMany(mappedBy = "salePoint", cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<Invoice> invoices;
 }

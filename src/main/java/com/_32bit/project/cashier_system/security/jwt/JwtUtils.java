@@ -1,7 +1,10 @@
 package com._32bit.project.cashier_system.security.jwt;
 
 import com._32bit.project.cashier_system.security.service.UserDetailsImpl;
+import com._32bit.project.cashier_system.service.impl.AuthServiceImpl;
 import io.jsonwebtoken.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -16,15 +19,30 @@ public class JwtUtils {
     @Value("${32_bit.app.jwtExpirationMs}")
     private int jwtExpirationMs;
 
+    private final static Logger logger = LogManager.getLogger(JwtUtils.class);
+
+
     public String generateJwtToken(Authentication authentication) {
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
+        logger.info("Generating JWT token for user: " + userPrincipal.getUsername());
 
-        return Jwts.builder()
-                .setSubject(userPrincipal.getUsername())
-                .setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
-                .compact();
+        try {
+            Date now = new Date();
+            Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
+
+            String token = Jwts.builder()
+                    .setSubject(userPrincipal.getUsername())
+                    .setIssuedAt(now)
+                    .setExpiration(expiryDate)
+                    .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                    .compact();
+
+            logger.info("JWT token generated successfully");
+            return token;
+        } catch (Exception e) {
+            logger.error("Error generating JWT token", e);
+            throw new RuntimeException("Error generating JWT token", e);
+        }
     }
 
     public String getUsernameFromJwtToken(String token) {

@@ -43,8 +43,8 @@ public class OfferServiceTest {
         offer.setId(1L);
         offer.setName("Test Offer");
         offer.setDescription("Test Description");
-        offer.setStartDate(LocalDate.parse("2022-01-01"));
-        offer.setEndDate(LocalDate.parse("2022-12-31"));
+        offer.setStartDate(LocalDate.parse("2025-01-01"));
+        offer.setEndDate(LocalDate.parse("2027-12-31"));
         offer.setInsertionDate(LocalDate.now());
         offer.setGetCount(1);
         offer.setPayFor(1);
@@ -53,8 +53,8 @@ public class OfferServiceTest {
         createOfferRequest = new CreateOfferRequest();
         createOfferRequest.setName("Test Offer");
         createOfferRequest.setDescription("Test Description");
-        createOfferRequest.setStartDate(LocalDate.parse("2022-01-01"));
-        createOfferRequest.setEndDate(LocalDate.parse("2022-12-31"));
+        createOfferRequest.setStartDate(LocalDate.parse("2025-01-01"));
+        createOfferRequest.setEndDate(LocalDate.parse("2027-12-31"));
         createOfferRequest.setGetCount(1);
         createOfferRequest.setPayFor(1);
 

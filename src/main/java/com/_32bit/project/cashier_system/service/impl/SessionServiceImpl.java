@@ -3,8 +3,8 @@ package com._32bit.project.cashier_system.service.impl;
 import com._32bit.project.cashier_system.DAO.*;
 import com._32bit.project.cashier_system.DTO.MessageResponse;
 import com._32bit.project.cashier_system.DTO.ObjectWithMessageResponse;
-import com._32bit.project.cashier_system.DTO.session.CashInfoDto;
 import com._32bit.project.cashier_system.DTO.session.SessionInfoResponse;
+import com._32bit.project.cashier_system.domains.Sale;
 import com._32bit.project.cashier_system.domains.SalePoint;
 import com._32bit.project.cashier_system.domains.Session;
 import com._32bit.project.cashier_system.domains.TeamMember;
@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,9 +35,9 @@ public class SessionServiceImpl implements SessionService {
 
     private final SalePointRepository salePointRepository;
 
-    private final SaleRepository saleRepository;
-
     private final TeamMemberRepository teamMemberRepository;
+
+    private final SaleRepository saleRepository;
 
     private final JwtUtils jwtUtil;
 
@@ -190,10 +192,10 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public ResponseEntity<?> openSession(CashInfoDto openSessionRequest, String token) {
+    public ResponseEntity<?> openSession(Long salePointId, String token) {
         String username = jwtUtil.getUsernameFromJwtToken(token.substring(7));
         Optional<TeamMember> teamMemberOptional = teamMemberRepository.findByUsernameAndDeleted(username, false);
-        Optional<SalePoint> salePointOptional = salePointRepository.findByIdAndDeleted(openSessionRequest.getSalePointId(), false);
+        Optional<SalePoint> salePointOptional = salePointRepository.findByIdAndDeleted(salePointId, false);
 
         // Check if user exists
         if (teamMemberOptional.isEmpty()) {
@@ -203,7 +205,7 @@ public class SessionServiceImpl implements SessionService {
 
         // Check if sale point exists
         if (salePointOptional.isEmpty()) {
-            logger.error("Session: Sale point with id: " + openSessionRequest.getSalePointId() + " not found");
+            logger.error("Session: Sale point with id: " + salePointId + " not found");
             return ResponseEntity.notFound().build();
         }
 
@@ -211,20 +213,20 @@ public class SessionServiceImpl implements SessionService {
         TeamMember teamMember = teamMemberOptional.get();
 
         if (salePoint != teamMember.getSalePoint() && teamMember.getSalePoint() != null) {
-            logger.error("Session: User with username: " + username + " can't open session in sale point with id: " + openSessionRequest.getSalePointId());
+            logger.error("Session: User with username: " + username + " can't open session in sale point with id: " + salePointId);
             return ResponseEntity.badRequest().body(
                     new ObjectWithMessageResponse(
-                            new MessageResponse("User with username: " + username + " can't open session in sale point with id: " + openSessionRequest.getSalePointId()),
+                            new MessageResponse("User with username: " + username + " can't open session in sale point with id: " + salePointId),
                             null
                     )
             );
         }
 
         if (haveOpenSession(salePoint)) {
-            logger.error("Session: Sale point with id: " + openSessionRequest.getSalePointId() + " already have open session");
+            logger.error("Session: Sale point with id: " + salePointId + " already have open session");
             return ResponseEntity.badRequest().body(
                     new ObjectWithMessageResponse(
-                            new MessageResponse("Sale point with id: " + openSessionRequest.getSalePointId() + " already have open session"),
+                            new MessageResponse("Sale point with id: " + salePointId + " already have open session"),
                             null
                     )
             );
@@ -234,10 +236,9 @@ public class SessionServiceImpl implements SessionService {
         logger.info("Session: Session created successfully");
 
         session.setOpeningDate(LocalDate.now());
-        session.setOpeningTime(LocalTime.now());
+        session.setOpeningTime(LocalTime.now().truncatedTo(ChronoUnit.SECONDS));
         session.setOpenedBy(teamMember);
         session.setClosed(false);
-        session.setOpeningCash(openSessionRequest.getCashInfo());
         session.setSalePoint(salePoint);
 
         session.setClosedBy(null);  // Ensure closedBy is null when opening a session
@@ -268,10 +269,10 @@ public class SessionServiceImpl implements SessionService {
 
 
     @Override
-    public ResponseEntity<?> closeSession(CashInfoDto closeSessionRequest,String token) {
+    public ResponseEntity<?> closeSession(Long salePointId,String token) {
         String username = jwtUtil.getUsernameFromJwtToken(token.substring(7));
         Optional<TeamMember> teamMemberOptional= teamMemberRepository.findByUsernameAndDeleted(username,false);
-        Optional<SalePoint> salePointOptional = salePointRepository.findByIdAndDeleted(closeSessionRequest.getSalePointId(), false);
+        Optional<SalePoint> salePointOptional = salePointRepository.findByIdAndDeleted(salePointId, false);
         // check if user exists
         if (teamMemberOptional.isEmpty()) {
             logger.error("Session: User with username: " + username + " not found");
@@ -279,7 +280,7 @@ public class SessionServiceImpl implements SessionService {
         }
         // check if sale point exists
         if (salePointOptional.isEmpty()) {
-            logger.error("Session: Sale point with id: " + closeSessionRequest.getSalePointId() + " not found");
+            logger.error("Session: Sale point with id: " + salePointId + " not found");
             return ResponseEntity.notFound().build();
         }
         // check if sale point have open session
@@ -288,20 +289,20 @@ public class SessionServiceImpl implements SessionService {
         TeamMember teamMember = teamMemberOptional.get();
 
         if (salePoint != teamMember.getSalePoint() && teamMember.getSalePoint() != null) {
-            logger.error("Session: User with username: " + username + " can't close session in sale point with id: " + closeSessionRequest.getSalePointId());
+            logger.error("Session: User with username: " + username + " can't close session in sale point with id: " + salePointId);
             return ResponseEntity.badRequest().body(
                     new ObjectWithMessageResponse(
-                            new MessageResponse("User with username: " + username + " can't close session in sale point with id: " + closeSessionRequest.getSalePointId()),
+                            new MessageResponse("User with username: " + username + " can't close session in sale point with id: " + salePointId),
                             null
                     )
             );
         }
 
         if (!haveOpenSession(salePoint)) {
-            logger.error("Session: Sale point with id: " + closeSessionRequest.getSalePointId() + " have no open session");
+            logger.error("Session: Sale point with id: " + salePointId + " have no open session");
             return ResponseEntity.badRequest().body(
                     new ObjectWithMessageResponse(
-                            new MessageResponse("Sale point with id: " + closeSessionRequest.getSalePointId() + " have no open session"),
+                            new MessageResponse("Sale point with id: " + salePointId + " have no open session"),
                             null
                     )
             );
@@ -310,13 +311,13 @@ public class SessionServiceImpl implements SessionService {
         Session session = sessionList.stream().filter(s -> !s.getClosed()).findFirst().get();
         logger.info("Session: Session found successfully");
         session.setClosingDate(LocalDate.now());
-        session.setClosingTime(LocalTime.now());
+        session.setClosingTime(LocalTime.now().truncatedTo(ChronoUnit.SECONDS));
         session.setClosedBy(teamMember);
-        session.setClosingCash(closeSessionRequest.getCashInfo());
-        session.setClosingCash(closeSessionRequest.getCashInfo());
-        session.setOpeningClosingBalance(closeSessionRequest.getCashInfo() - session.getOpeningCash());
-        session.setExceptedRealCashBalance(session.getOpeningCash() + session.getSalesCash() - closeSessionRequest.getCashInfo());
         session.setClosed(true);
+        getSessionSalesBySessionId(session.getId()).forEach(sale -> {
+            sale.setIsPosted(true);
+            saleRepository.save(sale);
+        });
         sessionRepository.save(session);
         logger.info("Session: Session closed successfully");
         SessionInfoResponse sessionInfoResponse = SessionMapper.toSessionInfoResponseDTO(session);
@@ -429,5 +430,28 @@ public class SessionServiceImpl implements SessionService {
 
         var salePoint = salePointRepository.findByIdAndDeleted(id, false).get();
         return salePoint.getSessions().stream().filter(s -> !s.getClosed()).findFirst().get();
+    }
+
+    @Override
+    public List<Sale> getSessionSalesBySessionId(Long sessionId) {
+        if (sessionId == null) {
+            logger.error("Session: Session id is null");
+            return Collections.emptyList();
+        }
+        Optional<Session> sessionOptional = sessionRepository.findByIdAndDeleted(sessionId, false);
+        if (sessionOptional.isEmpty()) {
+            logger.error("Session: Session with id: " + sessionId + " not found");
+            return Collections.emptyList();
+        }
+        return sessionOptional.get().getSales();
+    }
+
+    @Override
+    public Optional<SalePoint> getSalePointById(Long salePointId) {
+        if (salePointId == null) {
+            logger.error("Session: Sale point id is null");
+            return Optional.empty();
+        }
+        return salePointRepository.findById(salePointId);
     }
 }

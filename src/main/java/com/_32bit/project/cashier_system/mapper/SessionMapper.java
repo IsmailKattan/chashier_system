@@ -23,7 +23,7 @@ public class SessionMapper {
                     .id(sale.getId())
                     .saleDate(sale.getSaleDate())
                     .saleTime(sale.getSaleTime())
-                    .saleAmount(sale.getAmountPaid())
+                    .saleAmount(sale.getTotal())
                     .build()).toList();
         }
 
@@ -34,11 +34,6 @@ public class SessionMapper {
                 .openingTime(session.getOpeningTime())
                 .closingDate(session.getClosingDate())
                 .closingTime(session.getClosingTime())
-                .openingCash(session.getOpeningCash())
-                .closingCash(session.getClosingCash())
-                .salesCash(session.getSalesCash())
-                .openingClosingBalance(session.getOpeningClosingBalance())
-                .expectedRealCashBalance(session.getExceptedRealCashBalance())
                 .openedBy(session.getOpenedBy().getUsername())
                 .closedBy(session.getClosedBy() != null ? session.getClosedBy().getUsername() : null)  // Null check
                 .sales(sales)
@@ -57,11 +52,6 @@ public class SessionMapper {
                 .openingTime(LocalTime.of(0, 0, 0))
                 .closingDate(LocalDate.of(0, 1, 1))
                 .closingTime(LocalTime.of(0, 0, 0))
-                .openingCash(0.0)
-                .closingCash(0.0)
-                .salesCash(0.0)
-                .openingClosingBalance(0.0)
-                .exceptedRealCashBalance(0.0)
                 .openedBy(new TeamMember())
                 .closedBy(null)  // Ensure closedBy is null when initializing
                 .deleted(false)

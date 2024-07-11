@@ -10,6 +10,7 @@ import com._32bit.project.cashier_system.domains.TeamMember;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public class SaleMapper {
@@ -22,7 +23,7 @@ public class SaleMapper {
                 .saleDate(sale.getSaleDate() != null ? sale.getSaleDate() : null)
                 .saleTime(sale.getSaleTime() != null ? sale.getSaleTime() : null)
                 .items(SaleItemMapper.toItemOfSaleDtoList(sale.getSaleItems()))
-                .payments(PaymentMapper.toPaymentOfSaleDtoList(sale.getPayments()))
+                .payments(PaymentMapper.toPaymentOfSaleDtoList(sale.getPayments()) != null ? PaymentMapper.toPaymentOfSaleDtoList(sale.getPayments()) : null)
                 .total(sale.getTotal() != null ? sale.getTotal() : null)
                 .isPaid(sale.getIsPaid() != null ? sale.getIsPaid() : null)
                 .isPosted(sale.getIsPosted() != null ? sale.getIsPosted() : null)
@@ -40,10 +41,11 @@ public class SaleMapper {
     public static Sale createSaleRequestToSale(CreateSaleRequest request, TeamMember teamMember, Session session) {
         return Sale.builder()
                 .saleDate(LocalDate.now())
-                .saleTime(LocalTime.now())
+                .saleTime(LocalTime.now().truncatedTo(ChronoUnit.SECONDS))
                 .isPaid(false)
                 .isPosted(false)
                 .isInvoiced(false)
+                .deleted(false)
                 .soldBy(teamMember)
                 .session(session)
                 .build();

@@ -7,7 +7,7 @@ public enum PaymentMethod {
     mailorder,
     diger;
 
-    public Boolean contains(String paymentType) {
+    public static Boolean contains(String paymentType) {
         for (PaymentMethod type : PaymentMethod.values()) {
             if (type.name().equalsIgnoreCase(paymentType)) {
                 return true;

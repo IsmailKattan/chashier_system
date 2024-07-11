@@ -15,6 +15,6 @@ public class OfferInfoResponse {
     private String insertionDate;
     private String startDate;
     private String endDate;
-    private Integer getCount;
-    private Integer payFor;
+    private Double getCount;
+    private Double payFor;
 }

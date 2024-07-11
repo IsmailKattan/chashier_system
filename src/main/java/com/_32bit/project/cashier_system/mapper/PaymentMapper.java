@@ -8,6 +8,10 @@ import java.util.stream.Collectors;
 
 public class PaymentMapper {
     public static List<PaymentOfSaleDto> toPaymentOfSaleDtoList(List<Payment> payments) {
+        if (payments == null) {
+            return null;
+        }
+
         return payments.stream()
                 .map(PaymentMapper::toPaymentOfSaleDto)
                 .collect(Collectors.toList());

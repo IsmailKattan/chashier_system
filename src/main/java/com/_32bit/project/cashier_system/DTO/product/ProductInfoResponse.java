@@ -19,5 +19,8 @@ public class ProductInfoResponse {
     Double discountRate;
     Double discountedPrice;
     String insertedBy;
+    Long offerId;
+    String offerName;
+    String offerDescription;
 
 }

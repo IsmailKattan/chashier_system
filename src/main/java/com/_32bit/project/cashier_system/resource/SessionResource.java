@@ -1,9 +1,7 @@
 package com._32bit.project.cashier_system.resource;
 
-import com._32bit.project.cashier_system.DTO.session.CashInfoDto;
 import com._32bit.project.cashier_system.service.SessionService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -39,18 +37,18 @@ public class SessionResource {
         return sessionService.getSalePointSessions(id);
     }
 
-    @PostMapping("/open-session")
+    @PostMapping("/open-session/{salePointId}")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER') or hasRole('ROLE_CASHIER')")
-    public ResponseEntity<?> openSession(@RequestBody CashInfoDto openSessionRequest, HttpServletRequest request) {
+    public ResponseEntity<?> openSession(@PathVariable Long salePointId, HttpServletRequest request) {
         String token = request.getHeader("Authorization");
-        return sessionService.openSession(openSessionRequest,token);
+        return sessionService.openSession(salePointId,token);
     }
 
-    @PostMapping("/close-session")
+    @PostMapping("/close-session/{salePointId}")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER') or hasRole('ROLE_CASHIER')")
-    public ResponseEntity<?> closeSession(@RequestBody CashInfoDto closeSessionRequest, HttpServletRequest httpRequest) {
+    public ResponseEntity<?> closeSession(@PathVariable Long salePointId, HttpServletRequest httpRequest) {
         String token = httpRequest.getHeader("Authorization");
-        return sessionService.closeSession(closeSessionRequest, token);
+        return sessionService.closeSession(salePointId, token);
     }
 
     @GetMapping("/{sessionId}")

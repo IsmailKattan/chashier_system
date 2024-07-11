@@ -58,4 +58,7 @@ public class Sale {
     @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Payment> payments = new ArrayList<>();
 
+    @OneToOne(mappedBy = "sale", cascade = CascadeType.ALL,orphanRemoval = true)
+    private Invoice invoice;
+
 }

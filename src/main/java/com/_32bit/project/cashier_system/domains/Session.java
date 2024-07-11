@@ -40,21 +40,6 @@ public class Session {
     @Temporal(TemporalType.TIME)
     private LocalTime closingTime;
 
-    @Column(name = "opening_cash")
-    private Double openingCash;
-
-    @Column(name = "closing_cash")
-    private Double closingCash;
-
-    @Column(name = "current_cash")
-    private Double salesCash;
-
-    @Column(name = "opening_closing_balance")
-    private Double openingClosingBalance;
-
-    @Column(name = "expected_real_cash_balance")
-    private Double exceptedRealCashBalance;
-
     private Boolean deleted;
 
     private Boolean closed = false;

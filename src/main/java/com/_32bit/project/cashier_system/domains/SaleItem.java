@@ -20,7 +20,20 @@ public class SaleItem {
     @Column(nullable = false)
     private Double quantity;
 
+    @Column(name = "paid_for")
+    private Double paidFor;
+
     private Double total;
+
+    @Column(nullable = false,name = "is_offer_applied")
+    private Boolean isOfferApplied = false;
+
+    @Column(nullable = false,name = "is_discounted")
+    private Boolean isDiscounted = false;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "offer")
+    private Offer offer;
 
     private Boolean deleted = false;
 

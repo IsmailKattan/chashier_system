@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,17 +25,21 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public List<Payment> getPaymentsFromPaymentOfSaleDto(List<PaymentOfSaleDto> request, Sale sale) {
         if (request == null) {
-            return null;
+            return new ArrayList<>();
         }
-        List<Payment> payments =  request.stream()
-                .map(paymentOfSaleDto -> Payment.builder()
-                        .amount(paymentOfSaleDto.getAmount() == null ? 0 : paymentOfSaleDto.getAmount())
-                        .paymentMethod(PaymentMethod.valueOf(paymentOfSaleDto.getPaymentMethod().toLowerCase()) != null ? PaymentMethod.valueOf(paymentOfSaleDto.getPaymentMethod().toLowerCase()) : PaymentMethod.diger)
-                        .deleted(false)
-                        .sale(sale)
-                        .build())
-                .toList();
 
+        List<Payment> payments = new ArrayList<>();
+        for (PaymentOfSaleDto paymentDto: request) {
+            PaymentMethod.valueOf(paymentDto.getPaymentMethod().toLowerCase());
+            Payment payment = Payment.builder()
+                    .paymentMethod(PaymentMethod.valueOf(paymentDto.getPaymentMethod().toLowerCase()))
+                    .sale(sale)
+                    .deleted(false)
+                    .amount(paymentDto.getAmount() == null ? 0 : paymentDto.getAmount())
+                    .build();
+
+            payments.add(payment);
+        }
         paymentRepository.saveAll(payments);
         return payments;
     }

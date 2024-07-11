@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -74,22 +75,13 @@ public class SalePointMapper {
 
 
     public static SalePoint createRequestToDomain(CreateSalePointRequest request) {
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        Date dateWithoutTime = calendar.getTime();
-
-
         return SalePoint
                 .builder()
                 .id(request.getId())
                 .address(request.getAddress())
                 .name(request.getName())
-                .creatingDate(dateWithoutTime)
-                .creatingTime(new Time(System.currentTimeMillis()))
+                .creatingDate(LocalDate.now())
+                .creatingTime(LocalTime.now().truncatedTo(ChronoUnit.SECONDS))
                 .deleted(false)
                 .sessions(new ArrayList<>())
                 .teamMembers(new ArrayList<>())

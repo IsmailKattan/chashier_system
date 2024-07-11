@@ -1,8 +1,12 @@
 package com._32bit.project.cashier_system.service;
 
-import com._32bit.project.cashier_system.DTO.session.CashInfoDto;
+import com._32bit.project.cashier_system.domains.Sale;
+import com._32bit.project.cashier_system.domains.SalePoint;
 import com._32bit.project.cashier_system.domains.Session;
 import org.springframework.http.ResponseEntity;
+
+import java.util.List;
+import java.util.Optional;
 
 public interface SessionService {
 
@@ -16,13 +20,17 @@ public interface SessionService {
 
     ResponseEntity<?> getAllDeletedSessions();
 
-    ResponseEntity<?> openSession(CashInfoDto openSessionRequest, String token);
+    ResponseEntity<?> openSession(Long salePointId, String token);
 
-    ResponseEntity<?> closeSession(CashInfoDto closeSessionRequest, String token);
+    ResponseEntity<?> closeSession(Long salePointId, String token);
 
     ResponseEntity<?> getSalePointSessions(Long id);
 
     ResponseEntity<?> getSalePointOpenSession(Long id);
 
     Session getOpenSessionOfSalePoint(Long id);
+
+    List<Sale> getSessionSalesBySessionId(Long sessionId);
+
+    Optional<SalePoint> getSalePointById(Long salePointId);
 }

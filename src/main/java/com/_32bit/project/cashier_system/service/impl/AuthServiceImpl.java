@@ -56,20 +56,28 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public JwtResponseDto authenticateUser(LoginInfoDto loginInfoDto) {
+        logger.info("Attempting authentication for user: " + loginInfoDto.getUsername());
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginInfoDto.getUsername(), loginInfoDto.getPassword())
+            );
+            logger.info("Authentication successful for user: " + loginInfoDto.getUsername());
 
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            logger.info("Set authentication in SecurityContext");
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginInfoDto.getUsername(),loginInfoDto.getPassword())
-        );
-        // the program does not reach this line
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication);
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            String jwt = jwtUtils.generateJwtToken(authentication);
+            logger.info("JWT token generated successfully");
 
-        List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
-        logger.info("User: " + userDetails.getUsername() + ",Has roles: " + userDetails.getAuthorities() + " logged in successfully");
-        return new JwtResponseDto(jwt,userDetails.getId(),userDetails.getUsername(),userDetails.getEmail(),roles);
+            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
 
+            logger.info("User: " + userDetails.getUsername() + " has roles: " + roles);
+            return new JwtResponseDto(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), roles);
+        } catch (Exception e) {
+            logger.error("Authentication failed for user: " + loginInfoDto.getUsername(), e);
+            throw e;
+        }
     }
 
     @Override

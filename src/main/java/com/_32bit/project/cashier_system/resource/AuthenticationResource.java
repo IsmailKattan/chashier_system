@@ -8,6 +8,7 @@ import com._32bit.project.cashier_system.DTO.teamMember.request.LoginInfoDto;
 import com._32bit.project.cashier_system.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,8 +28,15 @@ public class AuthenticationResource {
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginInfoDto loginInfoDto) {
-        JwtResponseDto jwtResponseDto = authService.authenticateUser(loginInfoDto);
-        return ResponseEntity.ok(jwtResponseDto);
+        logger.info("Login attempt for user: " + loginInfoDto.getUsername());
+        try {
+            JwtResponseDto jwtResponseDto = authService.authenticateUser(loginInfoDto);
+            logger.info("Login successful for user: " + loginInfoDto.getUsername());
+            return ResponseEntity.ok(jwtResponseDto);
+        } catch (Exception e) {
+            logger.error("Login failed for user: " + loginInfoDto.getUsername(), e);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse("Authentication failed: " + e.getMessage()));
+        }
     }
 
     @PostMapping("/register")

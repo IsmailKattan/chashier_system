@@ -24,6 +24,9 @@ public class ProductMapper {
                 .discountRate(product.getDiscountRate())
                 .discountedPrice(product.getDiscountedPrice())
                 .insertedBy(product.getInsertedBy().getUsername())
+                .offerId(product.getOffer() != null ? product.getOffer().getId() : null)
+                .offerName(product.getOffer() != null ? product.getOffer().getName() : null)
+                .offerDescription(product.getOffer() != null ? product.getOffer().getDescription() : null)
                 .build();
     }
 

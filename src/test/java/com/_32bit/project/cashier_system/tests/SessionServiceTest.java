@@ -7,11 +7,9 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 import com._32bit.project.cashier_system.DAO.SalePointRepository;
-import com._32bit.project.cashier_system.DAO.SaleRepository;
 import com._32bit.project.cashier_system.DAO.SessionRepository;
 import com._32bit.project.cashier_system.DAO.TeamMemberRepository;
 import com._32bit.project.cashier_system.DTO.ObjectWithMessageResponse;
-import com._32bit.project.cashier_system.DTO.session.CashInfoDto;
 import com._32bit.project.cashier_system.domains.Sale;
 import com._32bit.project.cashier_system.domains.SalePoint;
 import com._32bit.project.cashier_system.domains.Session;
@@ -54,7 +52,6 @@ class SessionServiceTest {
     private Sale sale1;
     private SalePoint salePoint;
     private TeamMember teamMember;
-    private CashInfoDto cashInfoDto;
 
     @BeforeEach
     void setUp() {
@@ -65,25 +62,18 @@ class SessionServiceTest {
         session = new Session();
         session.setId(1L);
         session.setDeleted(false);
-        session.setSalesCash(100.0);
-        session.setOpeningCash(100.0);
-        session.setClosingCash(200.0);
         session.setClosed(true);
         session.setSalePoint(salePoint); // Set salePoint to session
-        session.setOpeningClosingBalance(100.0);
-        session.setExceptedRealCashBalance(100.0);
 
         sale = new Sale();
         sale.setId(1L);
         sale.setDeleted(false);
-        sale.setAmountCashPaid(100.0);
-        sale.setAmountPaid(100.0);
+        sale.setTotal(1000.0);
 
         sale1 = new Sale();
         sale1.setId(2L);
         sale1.setDeleted(false);
-        sale1.setAmountCashPaid(100.0);
-        sale1.setAmountPaid(100.0);
+        sale1.setTotal(2000.0);
 
         List<Sale> sales = new ArrayList<>();
         sales.add(sale1);
@@ -99,9 +89,6 @@ class SessionServiceTest {
         session.setOpenedBy(teamMember);
         session.setClosedBy(teamMember);
 
-        cashInfoDto = new CashInfoDto();
-        cashInfoDto.setSalePointId(1L);
-        cashInfoDto.setCashInfo(100.0);
     }
 
     @Test
@@ -187,29 +174,12 @@ class SessionServiceTest {
         when(salePointRepository.findByIdAndDeleted(anyLong(), eq(false))).thenReturn(Optional.of(salePoint));
         when(sessionRepository.save(any(Session.class))).thenReturn(session);
 
-        ResponseEntity<?> response = sessionService.openSession(cashInfoDto, "Bearer token");
+        ResponseEntity<?> response = sessionService.openSession(salePoint.getId(), "Bearer token");
 
         assertEquals(200, response.getStatusCodeValue());
         ObjectWithMessageResponse responseBody = (ObjectWithMessageResponse) response.getBody();
         assertNotNull(responseBody);
         assertEquals("Session opened successfully", responseBody.getMessageResponse().getMessage());
-    }
-
-    @Test
-    void testCloseSession_ValidRequest() {
-        session.setClosed(false);
-        session.setSalesCash(200.0);
-        session.setOpeningCash(100.0);
-        salePoint.setSessions(List.of(session));
-
-        when(jwtUtils.getUsernameFromJwtToken(anyString())).thenReturn("testUser");
-        when(teamMemberRepository.findByUsernameAndDeleted(eq("testUser"), eq(false))).thenReturn(Optional.of(teamMember));
-        when(salePointRepository.findByIdAndDeleted(anyLong(), eq(false))).thenReturn(Optional.of(salePoint));
-        when(sessionRepository.save(any(Session.class))).thenReturn(session);
-
-        ResponseEntity<?> response = sessionService.closeSession(cashInfoDto, "Bearer token");
-
-        assertEquals(200, response.getStatusCodeValue());
     }
 
     @Test

@@ -44,13 +44,16 @@ public class Offer {
     private LocalDate endDate;
 
     @Column(name = "get_count")
-    private Integer getCount;
+    private Double getCount;
 
     @Column(name = "pay_for")
-    private Integer payFor;
+    private Double payFor;
 
     @OneToMany(mappedBy = "offer", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Product> products = new ArrayList<>();
+
+    @OneToMany(mappedBy = "offer", cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<SaleItem> saleItems = new ArrayList<>();
 
     private Boolean deleted = false;
 

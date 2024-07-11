@@ -17,6 +17,6 @@ public class CreateOfferRequest {
     private LocalDate startDate;
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate endDate;
-    private Integer getCount;
-    private Integer payFor;
+    private Double getCount;
+    private Double payFor;
 }
