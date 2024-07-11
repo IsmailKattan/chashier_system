@@ -11,12 +11,14 @@ import com._32bit.project.cashier_system.domains.*;
 import com._32bit.project.cashier_system.domains.enums.PaymentMethod;
 import com._32bit.project.cashier_system.security.jwt.JwtUtils;
 import com._32bit.project.cashier_system.service.PaymentService;
+import com._32bit.project.cashier_system.service.ProductService;
 import com._32bit.project.cashier_system.service.SaleItemService;
 import com._32bit.project.cashier_system.service.SessionService;
 import com._32bit.project.cashier_system.service.impl.SaleServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -30,8 +32,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class SaleServiceTest {
@@ -47,6 +48,9 @@ public class SaleServiceTest {
     private SessionService sessionService;
     @Mock
     private JwtUtils jwtUtils;
+
+    @Mock
+    private ProductService productService;
 
     @InjectMocks
     private SaleServiceImpl saleService;
@@ -198,20 +202,24 @@ public class SaleServiceTest {
                                 .build()
                 ))
                 .build();
-        // Set up request properties
         String token = "Bearer token";
 
         when(jwtUtils.getUsernameFromJwtToken(anyString())).thenReturn("username");
         when(teamMemberRepository.findByUsername("username")).thenReturn(Optional.of(teamMember));
         when(sessionService.getOpenSessionOfSalePoint(any())).thenReturn(session);
         when(saleItemService.getSaleItemsFromItemOfSaleDto(any(), any())).thenReturn(Arrays.asList(saleItem1,saleItem2));
+        when(sessionService.getSalePointById(request.getSalePointId())).thenReturn(Optional.of(salePoint));
 
         // Act
         ResponseEntity<?> response = saleService.createSale(request, token);
 
         // Assert
+        ArgumentCaptor<Sale> saleCaptor = ArgumentCaptor.forClass(Sale.class);
+        verify(saleRepository, times(2)).save(saleCaptor.capture());
+        List<Sale> capturedSales = saleCaptor.getAllValues();
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        verify(saleRepository).save(any(Sale.class));
+        assertEquals(2, capturedSales.size());
     }
 
 

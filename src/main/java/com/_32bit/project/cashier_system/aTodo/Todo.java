@@ -15,4 +15,10 @@ public class Todo {
     // Todo 11: total price of offered sale should be calculated - done
     // Todo 12: add item total info into sale info response dto - done
     // Todo 13: after deleting sale, product quantity should be updated - done
+    /**
+     *                              --DONE AND TESTED--
+     * */
+
+    // Todo 14: clear deleted in all classes
+    // Todo 15: pagination filtering and sorting in all classes
 }
