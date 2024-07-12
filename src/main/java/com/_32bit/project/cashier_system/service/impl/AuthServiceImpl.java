@@ -82,92 +82,58 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public ResponseEntity<?> registerUser(CreateTeamMemberDto createTeamMemberDto) {
-        Boolean existsByUsername = teamMemberRepository.existsByUsername(createTeamMemberDto.getUsername());
-        Boolean existsByEmail = teamMemberRepository.existsByEmail(createTeamMemberDto.getEmail());
-        Boolean existsByPhoneNumber = teamMemberRepository.existsByPhoneNumber(createTeamMemberDto.getPhoneNumber());
-        Boolean salePointExists = salePointRepository.existsByIdAndDeleted(createTeamMemberDto.getSalePointId(),false);
-        if (existsByUsername) {
-            logger.warn("Username is already taken!");
-            return ResponseEntity
-                    .badRequest()
-                    .body("Error: Username is already taken!");
-        }
 
-        if (existsByEmail) {
-            logger.warn("Email is already in use!");
-            return ResponseEntity
-                    .badRequest()
-                    .body("Error: Email is already in use!");
-        }
+        if(createTeamMemberDto.getUsername().equals("admin")){
+            Boolean existsByUsername = teamMemberRepository.existsByUsername(createTeamMemberDto.getUsername());
+            if (existsByUsername) {
+                logger.warn("Username is already taken!");
+                return ResponseEntity
+                        .badRequest()
+                        .body("Error: Username is already taken!");
+            }
 
-        if (existsByPhoneNumber) {
-            logger.warn("Phone number is already in use!");
-            return ResponseEntity
-                    .badRequest()
-                    .body("Error: Phone number is already in use!");
-        }
+            List<Role> roles = getRoles(createTeamMemberDto);
 
-        if (!salePointExists && createTeamMemberDto.getSalePointId() != null){
-            logger.warn("Error: SalePoint is not found!");
-            return ResponseEntity
-                    .badRequest()
-                    .body("Error: SalePoint is not found!");
-        }
+            if (roles.isEmpty()) {
+                logger.warn("Error: Role is not found!");
+                return ResponseEntity
+                        .badRequest()
+                        .body("Error: Role is not found!");
+            }
 
-        List<Role> roles = getRoles(createTeamMemberDto);
+            TeamMember teamMember = new TeamMember();
+            teamMember.setUsername(createTeamMemberDto.getUsername());
+            teamMember.setEmail(createTeamMemberDto.getEmail());
+            teamMember.setPassword(passwordEncoder.encode(createTeamMemberDto.getPassword()));
+            teamMember.setPhoneNumber(createTeamMemberDto.getPhoneNumber());
+            teamMember.setFirstname(createTeamMemberDto.getFirstname());
+            teamMember.setLastname(createTeamMemberDto.getLastname());
+            teamMember.setRoles(roles);
 
-        if (roles.isEmpty()) {
-            logger.warn("Error: Role is not found!");
-            return ResponseEntity
-                    .badRequest()
-                    .body("Error: Role is not found!");
-        }
-
-        SalePoint salePoint = null;
-        if (createTeamMemberDto.getSalePointId() != null) {
-            salePoint = salePointRepository.findByIdAndDeleted(createTeamMemberDto.getSalePointId(), false)
-                    .orElseThrow(() -> new RuntimeException("Error: SalePoint not found"));
-        }
-        TeamMember teamMember = TeamMemberMapper.createTeamMemberDtoToTeamMemberDomain(createTeamMemberDto,salePoint,passwordEncoder.encode(createTeamMemberDto.getPassword()));
-        teamMember.setRoles(roles);
-
-        teamMemberRepository.save(teamMember);
-        logger.info("Inserted in: " + teamMember.getInsertionDate() + " " + teamMember.getInsertionTime()) ;
-        logger.info("User: " + teamMember.getUsername() + " registered successfully");
-        return ResponseEntity.ok(
-                new ObjectWithMessageResponse(
-                    new MessageResponse("User registered successfully"),
-                    TeamMemberMapper.toTeamMemberInfoDto(teamMember)
+            teamMemberRepository.save(teamMember);
+            logger.info("Inserted in: " + teamMember.getInsertionDate() + " " + teamMember.getInsertionTime()) ;
+            logger.info("User: " + teamMember.getUsername() + " registered successfully");
+            return ResponseEntity.ok(
+                    new ObjectWithMessageResponse(
+                            new MessageResponse("User registered successfully"),
+                            TeamMemberMapper.toTeamMemberInfoDto(teamMember)
                     )
-                );
+            );
+        }
+        else return ResponseEntity.badRequest().body("Error: You are not authorized to create this user");
     }
 
     private List<Role> getRoles(CreateTeamMemberDto createTeamMemberDto) {
         List<String> strRoles = createTeamMemberDto.getRoles();
         List<Role> roles = new ArrayList<>();
         if(createTeamMemberDto.getRoles() != null && !createTeamMemberDto.getRoles().isEmpty()) {
-            strRoles.forEach(role->{
-                switch (role) {
-                    case "admin" :
-                        Role adminRole = roleRepository.findByNameAndDeleted(ERole.ROLE_ADMIN,false)
-                                .orElseThrow(()->new RuntimeException("Error: role ADMIN not found"));
-                        roles.add(adminRole);
-
-                        break;
-                    case "manager":
-                        Role managerRole = roleRepository.findByNameAndDeleted(ERole.ROLE_MANAGER,false)
-                                .orElseThrow(()->new RuntimeException("Error: role Manager not found"));
-                        roles.add(managerRole);
-
-                        break;
-                    case "cashier":
-                        Role cashierRole = roleRepository.findByNameAndDeleted(ERole.ROLE_CASHIER,false)
-                                .orElseThrow(() -> new RuntimeException("Error: role CASHIER not found"));
-                        roles.add(cashierRole);
-
-                        break;
+            for (String strRole:strRoles) {
+                if(ERole.contains("ROLE_" + strRole.toUpperCase())) {
+                    Role role = roleRepository.findByNameAndDeleted(ERole.valueOf("ROLE_" + strRole.toUpperCase()),false)
+                            .orElseThrow(()->new RuntimeException("Error: role " + strRole + " not found"));
+                    roles.add(role);
                 }
-            });
+            }
         }
         return roles;
     }

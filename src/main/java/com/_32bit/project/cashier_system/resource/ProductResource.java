@@ -8,6 +8,7 @@ import com._32bit.project.cashier_system.service.ProductService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -96,21 +97,25 @@ public class ProductResource {
     }
 
     @PostMapping("/set-discount/{id}/{discountRate}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
     public ResponseEntity<?> setDiscount(@PathVariable Long id, @PathVariable Double discountRate) {
         return productService.setDiscount(id, discountRate);
     }
 
     @DeleteMapping("/remove-discount/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
     public ResponseEntity<?> removeDiscount(@PathVariable Long id) {
         return productService.removeDiscount(id);
     }
 
     @PostMapping("/set-offer/{productId}/{offerId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
     public ResponseEntity<?> setOffer(@PathVariable Long productId, @PathVariable Long offerId) {
         return productService.setOffer(productId, offerId);
     }
 
     @DeleteMapping("/remove-offer/{productId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
     public ResponseEntity<?> removeOffer(@PathVariable Long productId) {
         return productService.removeOffer(productId);
     }

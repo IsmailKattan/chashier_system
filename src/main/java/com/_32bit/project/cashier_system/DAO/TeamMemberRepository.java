@@ -15,16 +15,10 @@ public interface TeamMemberRepository extends JpaRepository<TeamMember,Long> {
     Optional<TeamMember> findByUsername(String username);
 
     Optional<TeamMember> findByUsernameAndDeleted(String username, Boolean deleted);
-    Optional<TeamMember> findByDeleted(Boolean deleted);
-
-    Optional<TeamMember> findByFirstname(String firstname);
-
-    Optional<TeamMember> findByLastname(String lastname);
-
-    Optional<List<TeamMember>> findByFirstnameOrLastnameAndDeleted(String firstname, String lastname, Boolean deleted);
 
     Boolean existsByUsername(String username);
     Boolean existsByEmail(String email);
     Boolean existsByPhoneNumber(String phoneNumber);
 
+    List<TeamMember> findAllByDeleted(Boolean deleted);
 }
