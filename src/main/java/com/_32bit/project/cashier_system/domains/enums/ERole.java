@@ -6,5 +6,14 @@ public enum ERole {
 
     ROLE_MANAGER,
 
-    ROLE_CASHIER
+    ROLE_CASHIER;
+
+    public static boolean contains(String s) {
+        for (ERole role : values()) {
+            if (role.name().equals(s)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -25,10 +25,10 @@ public class TeamMemberMapper {
     public static TeamMember createTeamMemberDtoToTeamMemberDomain(CreateTeamMemberDto createTeamMemberDto, SalePoint salePoint, String password) {
 
         return TeamMember.builder()
-                .firstname(createTeamMemberDto.getFirstname())
+                .firstname(createTeamMemberDto.getFirstname() != null ? createTeamMemberDto.getFirstname() : "")
                 .username(createTeamMemberDto.getUsername())
                 .phoneNumber(createTeamMemberDto.getPhoneNumber())
-                .lastname(createTeamMemberDto.getLastname())
+                .lastname(createTeamMemberDto.getLastname() != null ? createTeamMemberDto.getLastname() : "")
                 .email(createTeamMemberDto.getEmail())
                 .password(password)
                 .insertionDate(LocalDate.now())
@@ -41,8 +41,8 @@ public class TeamMemberMapper {
     public static TeamMemberInfoDto toTeamMemberInfoDto(TeamMember teamMember) {
         return TeamMemberInfoDto.builder()
                 .id(teamMember.getId())
-                .firstname(teamMember.getFirstname())
-                .lastname(teamMember.getLastname())
+                .firstname(teamMember.getFirstname() != null ? teamMember.getFirstname() : "")
+                .lastname(teamMember.getLastname() != null ? teamMember.getLastname() : "")
                 .insertionDate(teamMember.getInsertionDate())
                 .insertionTime(teamMember.getInsertionTime())
                 .roles(teamMember.getRoles().stream()
