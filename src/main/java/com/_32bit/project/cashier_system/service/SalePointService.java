@@ -2,6 +2,7 @@ package com._32bit.project.cashier_system.service;
 
 import com._32bit.project.cashier_system.DTO.salePoint.CreateSalePointRequest;
 import com._32bit.project.cashier_system.DTO.salePoint.SalePointInfoResponse;
+import com._32bit.project.cashier_system.domains.SalePoint;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -31,4 +32,6 @@ public interface SalePointService {
     ResponseEntity<?> getSalePointSessions(Long id);
 
     ResponseEntity<?> getSalePointTeamMembers(Long id);
+
+    SalePoint getSalePointById(Long salePointId);
 }

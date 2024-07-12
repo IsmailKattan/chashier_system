@@ -3,12 +3,17 @@ package com._32bit.project.cashier_system.resource;
 
 import com._32bit.project.cashier_system.DTO.payment.PaymentOfSaleDto;
 import com._32bit.project.cashier_system.DTO.sale.CreateSaleRequest;
+import com._32bit.project.cashier_system.domains.Sale;
 import com._32bit.project.cashier_system.service.SaleService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -84,5 +89,47 @@ public class SaleResource {
         return saleService.restoreSale(id);
     }
 
+    @GetMapping("/paged-sales")
+    public ResponseEntity<?> getAllSales(
+            Pageable pageable,
+            @RequestParam(required = false) Boolean deleted,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(required = false) Boolean isPaid,
+            @RequestParam(required = false) Boolean isPosted,
+            @RequestParam(required = false) Boolean isInvoiced) {
+
+        var sales = saleService.getAllSalesByDeleted(pageable, deleted, startDate, endDate, isPaid, isPosted, isInvoiced);
+        return ResponseEntity.ok(sales);
+    }
+
+    @GetMapping("/paged-session-sales/{sessionId}")
+    public ResponseEntity<Page<Sale>> getSalesBySession(
+            @PathVariable Long sessionId,
+            Pageable pageable,
+            @RequestParam(required = false) Boolean deleted,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(required = false) Boolean isPaid,
+            @RequestParam(required = false) Boolean isPosted,
+            @RequestParam(required = false) Boolean isInvoiced) {
+
+        Page<Sale> sales = saleService.getSalesBySessionIdAndDeleted(pageable, sessionId, deleted, startDate, endDate, isPaid, isPosted, isInvoiced);
+        return ResponseEntity.ok(sales);
+    }
+
+    @GetMapping("/paged-sale-point-sales/{salePointId}")
+    public ResponseEntity<Page<Sale>> getSalesBySalePoint(
+            @PathVariable Long salePointId,
+            Pageable pageable,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(required = false) Boolean isPaid,
+            @RequestParam(required = false) Boolean isPosted,
+            @RequestParam(required = false) Boolean isInvoiced) {
+
+        Page<Sale> sales = saleService.getSalesBySalePointId(pageable, salePointId, startDate, endDate, isPaid, isPosted, isInvoiced);
+        return ResponseEntity.ok(sales);
+    }
 
 }

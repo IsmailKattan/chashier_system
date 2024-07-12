@@ -241,7 +241,7 @@ public class SaleServiceTest {
     void getSessionSalesByDeleted_shouldReturnSales() {
         // Arrange
 
-        when(saleRepository.findBySessionId(1L)).thenReturn(Arrays.asList(sale,sale));
+        when(saleRepository.findBySessionIdAndDeleted(1L,false)).thenReturn(Arrays.asList(sale,sale));
 
         // Act
         ResponseEntity<?> response = saleService.getSessionSales(1L);

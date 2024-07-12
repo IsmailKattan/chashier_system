@@ -309,15 +309,26 @@ public class SessionServiceImpl implements SessionService {
         }
 
         Session session = sessionList.stream().filter(s -> !s.getClosed()).findFirst().get();
+        boolean isSessionSalesPosted = session.getSales().stream().allMatch(Sale::getIsPosted);
+        if (!isSessionSalesPosted) {
+            logger.error("Session: Session with id: " + session.getId() + " have unposted sales");
+            return ResponseEntity.badRequest().body(
+                    new ObjectWithMessageResponse(
+                            new MessageResponse("Session with id: " + session.getId() + " have unposted sales"),
+                            null
+                    )
+            );
+        }
+        getSessionSalesBySessionId(session.getId()).forEach(sale -> {
+            sale.setIsPosted(true);
+            saleRepository.save(sale);
+        });
         logger.info("Session: Session found successfully");
         session.setClosingDate(LocalDate.now());
         session.setClosingTime(LocalTime.now().truncatedTo(ChronoUnit.SECONDS));
         session.setClosedBy(teamMember);
         session.setClosed(true);
-        getSessionSalesBySessionId(session.getId()).forEach(sale -> {
-            sale.setIsPosted(true);
-            saleRepository.save(sale);
-        });
+
         sessionRepository.save(session);
         logger.info("Session: Session closed successfully");
         SessionInfoResponse sessionInfoResponse = SessionMapper.toSessionInfoResponseDTO(session);
@@ -453,5 +464,19 @@ public class SessionServiceImpl implements SessionService {
             return Optional.empty();
         }
         return salePointRepository.findById(salePointId);
+    }
+
+    @Override
+    public Session getSessionById(Long sessionId) {
+        if (sessionId == null) {
+            logger.error("Session: Session id is null");
+            return null;
+        }
+        Optional<Session> sessionOptional = sessionRepository.findByIdAndDeleted(sessionId,false);
+        if (sessionOptional.isEmpty()) {
+            logger.error("Session: Session with id: " + sessionId + " not found");
+            return null;
+        }
+        return sessionOptional.get();
     }
 }

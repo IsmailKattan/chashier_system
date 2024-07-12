@@ -32,9 +32,7 @@ public class SalePointServiceImpl implements SalePointService {
 
     private final SalePointRepository salePointRepository;
 
-
     private final TeamMemberRepository teamMemberRepository;
-
 
     private final JwtUtils jwtUtils;
 
@@ -433,6 +431,19 @@ public class SalePointServiceImpl implements SalePointService {
         );
         logger.info("Sale point: All team members of sale point with id: " + id + " returned");
         return ResponseEntity.ok().body(infoWithMessageResponse);
+    }
+
+    @Override
+    public SalePoint getSalePointById(Long salePointId) {
+        if (salePointId == null) {
+            logger.warn("Sale point: Sale point id can't be null");
+            throw new RuntimeException("Sale point id can't be null");
+        }
+        if (salePointRepository.findByIdAndDeleted(salePointId,false).isEmpty()) {
+            logger.warn("Sale point: Sale point with id: " + salePointId + " not found");
+            throw new RuntimeException("Sale point not found");
+        }
+        return salePointRepository.findByIdAndDeleted(salePointId,false).orElseThrow(() -> new RuntimeException("Sale point not found"));
     }
 
 

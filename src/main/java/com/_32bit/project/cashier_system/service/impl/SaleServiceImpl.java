@@ -6,6 +6,7 @@ import com._32bit.project.cashier_system.DTO.ObjectWithMessageResponse;
 import com._32bit.project.cashier_system.DTO.payment.PaymentOfSaleDto;
 import com._32bit.project.cashier_system.DTO.sale.CreateSaleRequest;
 import com._32bit.project.cashier_system.DTO.sale.SaleInfoResponse;
+import com._32bit.project.cashier_system.DTO.sale.SaleSpecification;
 import com._32bit.project.cashier_system.domains.*;
 import com._32bit.project.cashier_system.domains.enums.PaymentMethod;
 import com._32bit.project.cashier_system.mapper.SaleItemMapper;
@@ -15,13 +16,18 @@ import com._32bit.project.cashier_system.service.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 @Service
 public class SaleServiceImpl implements SaleService {
@@ -34,11 +40,11 @@ public class SaleServiceImpl implements SaleService {
     private final SessionService sessionService;
     private final JwtUtils jwtUtils;
     private final InvoiceService invoiceService;
-
+    private final SalePointService salePointService;
     private final ProductService productService;
 
     @Autowired
-    public SaleServiceImpl(SaleRepository saleRepository, TeamMemberRepository teamMemberRepository, PaymentService paymentService, SaleItemService saleItemService, SessionService sessionService, JwtUtils jwtUtils, InvoiceService invoiceService, ProductService productService) {
+    public SaleServiceImpl(SaleRepository saleRepository, TeamMemberRepository teamMemberRepository, PaymentService paymentService, SaleItemService saleItemService, SessionService sessionService, JwtUtils jwtUtils, InvoiceService invoiceService, SalePointService salePointService, ProductService productService) {
         this.saleRepository = saleRepository;
         this.teamMemberRepository = teamMemberRepository;
         this.paymentService = paymentService;
@@ -46,6 +52,7 @@ public class SaleServiceImpl implements SaleService {
         this.sessionService = sessionService;
         this.jwtUtils = jwtUtils;
         this.invoiceService = invoiceService;
+        this.salePointService = salePointService;
         this.productService = productService;
     }
 
@@ -153,7 +160,7 @@ public class SaleServiceImpl implements SaleService {
             logger.error("Id is null");
             return ResponseEntity.badRequest().body(new ObjectWithMessageResponse(new MessageResponse("Id is null"), null));
         }
-        List<Sale> sales = saleRepository.findBySessionId(id);
+        List<Sale> sales = saleRepository.findBySessionIdAndDeleted(id,false);
         if (sales.isEmpty()) {
             logger.error("Sales not found");
             return ResponseEntity.notFound().build();
@@ -503,4 +510,92 @@ public class SaleServiceImpl implements SaleService {
         }
         return salePointOptional.get();
     }
+
+    @Override
+    public Page getAllSalesByDeleted(Pageable pageable, Boolean deleted, LocalDate startDate, LocalDate endDate, Boolean isPaid, Boolean isPosted, Boolean isInvoiced) {
+        if (deleted == null) {
+            logger.error("Deleted parameter is null");
+            return Page.empty();
+        }
+
+        Specification<Sale> specification = createBaseSpecification(startDate, endDate, isPaid, isPosted, isInvoiced)
+                .and((root, query, cb) -> cb.equal(root.get("deleted"), deleted));
+        Page<Sale> salesPage = saleRepository.findAll(specification, pageable);
+        Page<SaleInfoResponse> sales = salesPage.map(new Function<Sale, SaleInfoResponse>() {
+            @Override
+            public SaleInfoResponse apply(Sale sale) {
+                return SaleMapper.toSaleInfoResponse(sale);
+            }
+
+        });
+        return sales;
+    }
+
+    @Override
+    public Page getSalesBySessionIdAndDeleted(Pageable pageable, Long sessionId, Boolean deleted, LocalDate startDate, LocalDate endDate, Boolean isPaid, Boolean isPosted, Boolean isInvoiced) {
+        if (sessionId == null || deleted == null) {
+            logger.error("SessionId or Deleted parameter is null");
+            return Page.empty();
+        }
+
+        if (sessionService.getSessionById(sessionId) == null) {
+            logger.error("Session not found");
+            return Page.empty();
+        }
+
+        Specification<Sale> specification = createBaseSpecification(startDate, endDate, isPaid, isPosted, isInvoiced)
+                .and((root, query, cb) -> cb.equal(root.get("session").get("id"), sessionId))
+                .and((root, query, cb) -> cb.equal(root.get("deleted"), deleted));
+
+        Page<Sale> salesPages = saleRepository.findAll(specification, pageable);
+        Page<SaleInfoResponse> sales = salesPages.map(new Function<Sale, SaleInfoResponse>() {
+            @Override
+            public SaleInfoResponse apply(Sale sale) {
+                return SaleMapper.toSaleInfoResponse(sale);
+            }
+
+        });
+
+        return sales;
+    }
+
+    @Override
+    public Page getSalesBySalePointId(Pageable pageable, Long salePointId, LocalDate startDate, LocalDate endDate, Boolean isPaid, Boolean isPosted, Boolean isInvoiced) {
+        if (salePointId == null) {
+            logger.error("SalePointId is null");
+            return Page.empty();
+        }
+
+        if (salePointService.getSalePointById(salePointId) == null) {
+            logger.error("Sale point not found");
+            return Page.empty();
+        }
+
+        Specification<Sale> specification = createBaseSpecification(startDate, endDate, isPaid, isPosted, isInvoiced)
+                .and((root, query, cb) -> cb.equal(root.get("session").get("salePoint").get("id"), salePointId));
+
+        Page<Sale> salesPages = saleRepository.findAll(specification, pageable);
+        Page<SaleInfoResponse> sales = salesPages.map(new Function<Sale, SaleInfoResponse>() {
+            @Override
+            public SaleInfoResponse apply(Sale sale) {
+                return SaleMapper.toSaleInfoResponse(sale);
+            }
+
+        });
+
+        return sales;
+    }
+
+    private Specification<Sale> createBaseSpecification(LocalDate startDate, LocalDate endDate, Boolean isPaid, Boolean isPosted, Boolean isInvoiced) {
+        Specification<Sale> specification = Specification.where(null);
+
+        specification = specification.and(SaleSpecification.hasDateBetween(startDate, endDate));
+        specification = specification.and(SaleSpecification.isPaid(isPaid));
+        specification = specification.and(SaleSpecification.isPosted(isPosted));
+        specification = specification.and(SaleSpecification.isInvoiced(isInvoiced));
+
+        return specification;
+    }
+
+
 }

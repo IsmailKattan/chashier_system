@@ -5,6 +5,7 @@ import com._32bit.project.cashier_system.domains.SalePoint;
 import com._32bit.project.cashier_system.domains.Session;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,4 +34,6 @@ public interface SessionService {
     List<Sale> getSessionSalesBySessionId(Long sessionId);
 
     Optional<SalePoint> getSalePointById(Long salePointId);
+
+    Session getSessionById(Long sessionId);
 }

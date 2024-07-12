@@ -4,8 +4,11 @@ import com._32bit.project.cashier_system.DTO.payment.PaymentOfSaleDto;
 import com._32bit.project.cashier_system.DTO.sale.CreateSaleRequest;
 import com._32bit.project.cashier_system.domains.Sale;
 import com._32bit.project.cashier_system.domains.SalePoint;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface SaleService {
@@ -38,5 +41,9 @@ public interface SaleService {
 
     SalePoint getSalePointBySaleId(Long saleId);
 
+    Page<Sale> getAllSalesByDeleted(Pageable pageable, Boolean deleted, LocalDate startDate, LocalDate endDate, Boolean isPaid, Boolean isPosted, Boolean isInvoiced);
 
+    Page<Sale> getSalesBySessionIdAndDeleted(Pageable pageable, Long sessionId, Boolean deleted, LocalDate startDate, LocalDate endDate, Boolean isPaid, Boolean isPosted, Boolean isInvoiced);
+
+    Page<Sale> getSalesBySalePointId(Pageable pageable, Long salePointId, LocalDate startDate, LocalDate endDate, Boolean isPaid, Boolean isPosted, Boolean isInvoiced);
 }
