@@ -1,13 +1,16 @@
 package com._32bit.project.cashier_system.resource;
 
 
+import com._32bit.project.cashier_system.DTO.invoice.InvoiceEmailRequest;
+import com._32bit.project.cashier_system.DTO.invoice.InvoiceInfoDto;
+import com._32bit.project.cashier_system.pdf.PDFGenerator;
 import com._32bit.project.cashier_system.service.InvoiceService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.ByteArrayOutputStream;
 
 @RestController
 @RequestMapping("/api/invoice")
@@ -46,6 +49,9 @@ public class InvoiceResource {
         return invoiceService.getInvoicesByTeamMemberId(teamMemberId);
     }
 
-
+    @GetMapping("/generate-invoice/{invoiceId}")
+    public ResponseEntity<?> generateInvoice(@PathVariable Long invoiceId) {
+        return invoiceService.generateInvoice(invoiceId);
+    }
 
 }

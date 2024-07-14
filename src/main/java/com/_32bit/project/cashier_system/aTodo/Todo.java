@@ -19,8 +19,7 @@ public class Todo {
      *                              --DONE AND TESTED--
      * */
 
-    // Todo 14: clear deleted in all classes
-    // Todo 15: pagination filtering and sorting in all classes - done
-    // Todo 16: cannot close session with unpaid sales - done
-    // Todo 17: add pdf invoice generation
+    // Todo 14: pagination filtering and sorting in all classes - done
+    // Todo 15: cannot close session with unpaid sales - done
+    // Todo 16: add pdf invoice generation - done
 }

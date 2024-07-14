@@ -31,9 +31,13 @@ public class SaleItemMapper {
             saleItemInfoResponseDtos.add(
                     SaleItemInfoResponseDto.builder()
                             .id(saleItem.getId())
+                            .name(saleItem.getProduct().getName())
+                            .brand(saleItem.getProduct().getBrand())
                             .price(saleItem.getProduct().getPrice())
                             .discountedPrice(saleItem.getProduct().getDiscountedPrice())
+                            .discountRate(saleItem.getProduct().getDiscountRate())
                             .quantity(saleItem.getQuantity())
+                            .unit(saleItem.getProduct().getUnit().name())
                             .forFree(saleItem.getQuantity() - saleItem.getPaidFor())
                             .total(saleItem.getTotal())
                             .build()

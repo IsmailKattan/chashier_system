@@ -9,15 +9,18 @@ import com._32bit.project.cashier_system.domains.Sale;
 import com._32bit.project.cashier_system.domains.SalePoint;
 import com._32bit.project.cashier_system.domains.TeamMember;
 import com._32bit.project.cashier_system.mapper.InvoiceMapper;
+import com._32bit.project.cashier_system.pdf.PDFGenerator;
 import com._32bit.project.cashier_system.service.InvoiceService;
 import com._32bit.project.cashier_system.service.SaleService;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
@@ -144,6 +147,36 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice.setExtractionTime(LocalTime.now().truncatedTo(ChronoUnit.SECONDS));
         invoiceRepository.save(invoice);
         return invoiceRepository.save(invoice);
+    }
+
+    @Override
+    public ResponseEntity<?> generateInvoice(Long invoiceId) {
+        if (invoiceId == null) {
+            logger.error("InvoiceId cannot be null");
+            return ResponseEntity.badRequest().body("InvoiceId cannot be null");
+        }
+        Optional<Invoice> invoiceOptional = invoiceRepository.findById(invoiceId);
+        if (invoiceOptional.isEmpty()) {
+            logger.error("Invoice not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ObjectWithMessageResponse(new MessageResponse("Invoice not found"),null));
+        }
+        Invoice invoice = invoiceOptional.get();
+        InvoiceInfoDto invoiceInfoDto = InvoiceMapper.toInvoiceInfoDto(invoice);
+        try {
+            ByteArrayOutputStream pdf = PDFGenerator.generateInvoicePDF(invoiceInfoDto);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Disposition", "attachment; filename=invoice.pdf");
+            return new ResponseEntity<>(pdf.toByteArray(), headers, HttpStatus.OK);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public InvoiceInfoDto getInvoiceObjectById(Long invoiceId) {
+        Optional<Invoice> invoiceOptional = invoiceRepository.findById(invoiceId);
+        return invoiceOptional.map(InvoiceMapper::toInvoiceInfoDto).orElse(null);
     }
 
 

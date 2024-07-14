@@ -12,10 +12,13 @@ public class SaleItemInfoResponseSerializer extends JsonSerializer<SaleItemInfoR
     public void serialize(SaleItemInfoResponseDto saleItemInfoResponseDto, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
         jsonGenerator.writeStartObject();
         jsonGenerator.writeNumberField("id", saleItemInfoResponseDto.getId());
+        jsonGenerator.writeStringField("ürün_adı", saleItemInfoResponseDto.getName());
+        jsonGenerator.writeStringField("marka", saleItemInfoResponseDto.getBrand());
         jsonGenerator.writeNumberField("fıyat", saleItemInfoResponseDto.getPrice());
 
         if (saleItemInfoResponseDto.getDiscountedPrice() != 0.0) {
             jsonGenerator.writeNumberField("indirimli_fiyat", saleItemInfoResponseDto.getDiscountedPrice());
+            jsonGenerator.writeNumberField("indirim_orani", saleItemInfoResponseDto.getDiscountRate());
         }
         jsonGenerator.writeNumberField("miktar", saleItemInfoResponseDto.getQuantity());
 
