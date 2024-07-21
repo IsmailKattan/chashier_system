@@ -480,8 +480,7 @@ The application will start running at http://localhost:8080.
         "quantity" : "1000",
         "unit" : "adet",
         "price" : 25.0
-    },
-    ...
+    }
 ]
 ```
 
@@ -495,8 +494,7 @@ The application will start running at http://localhost:8080.
     {
         "id" : 2,
         "quantity" : 15
-    },
-    ...
+    }
 ]
 ```
 
@@ -510,8 +508,7 @@ The application will start running at http://localhost:8080.
     {
         "id" : 2,
         "price" : 15
-    },
-    ...
+    }
 ]
 ```
 
