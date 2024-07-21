@@ -52,7 +52,7 @@ public class TeamMember {
 
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="team_member_roles",
             joinColumns = @JoinColumn(name = "team_member_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))

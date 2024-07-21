@@ -39,11 +39,6 @@ public class AuthenticationResource {
         }
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody CreateTeamMemberDto createTeamMemberDto) {
-        return authService.registerUser(createTeamMemberDto);
-    }
-
     @PostMapping("/logout")
     public ResponseEntity<?> logoutUser() {
         SecurityContextHolder.clearContext();

@@ -10,15 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class HelloWorldResource {
 
-    @GetMapping("/hi-user")
-    public String helloUser(){
-        return "Hello user";
-    }
-
-    @GetMapping("/logout-success")
-    public String logoutSuccess(){
-        return "see you later";
-    }
     @GetMapping("/manager")
     @PreAuthorize("hasAuthority('ROLE_MANAGER')")
     public String helloManager(){
