@@ -32,6 +32,10 @@ public class DataInitializer implements CommandLineRunner {
             roleRepository.save(new Role(null, ERole.ROLE_CASHIER, false));
         }
 
+        if (teamMemberRepository.findByUsernameAndDeleted("admin", false).isPresent()) {
+            return;
+        }
+
         if (teamMemberRepository.findByUsernameAndDeleted("admin", false).isEmpty()) {
             List<Role> roles = roleRepository.findAll(); // Fetch roles to attach to team member
             TeamMember teamMember = TeamMember.builder()
@@ -41,6 +45,7 @@ public class DataInitializer implements CommandLineRunner {
                     .password(passwordEncoder.encode("32-bit"))
                     .email("admin@gmail.com")
                     .phoneNumber("0123456789")
+                    .deleted(false)
                     .roles(roles) // Attach fetched roles
                     .build();
             teamMemberRepository.save(teamMember);
